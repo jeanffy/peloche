@@ -1,0 +1,6 @@
+output
+peloche.app
+test-data
+.DS_Store
+__debug*
+fyne_metadata_init.go
