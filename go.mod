@@ -3,7 +3,7 @@ module peloche
 go 1.24.2
 
 require (
-	fyne.io/fyne/v2 v2.6.0
+	fyne.io/fyne/v2 v2.6.1
 	github.com/adrium/goheif v0.0.0-20230113233934-ca402e77a786
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/sqweek/dialog v0.0.0-20240226140203-065105509627

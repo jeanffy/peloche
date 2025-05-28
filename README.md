@@ -26,11 +26,13 @@ Only file types "jpg/jpeg", "png" and "heic" are currently supported (based on t
 
 ## How to run
 
-Clone this repo and run `go run .`.
+Clone this repo and run `go mod tidy` then `go run .`.
 
-An app can be built with dedicated scripts for each platform:
+## Package
 
-- macOS: `sh etc/scripts/build-macos.sh`
+The app can be packaged with dedicated scripts for each platform:
+
+- macOS: `sh etc/scripts/package-macos.sh`
 
 The resulting app can be found in the `output` directory.
 
@@ -51,3 +53,10 @@ If any resource is added to the `etc/resources` directory, the command `go gener
 - https://github.com/adrium/goheif for HEIC decoding
 - https://github.com/nfnt/resize for image resizing (TODO: find an alternative as the project is now archived)
 - https://github.com/sqweek/dialog for native dialogs
+
+### Publish a release
+
+To trigger the packaging pipeline, when the main branch is stable, create and publish a tag:
+
+- push all your commits to remote
+- `sh etc/scripts/new-release.sh vX.Y.Z`

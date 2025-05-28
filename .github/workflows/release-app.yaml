@@ -1,0 +1,43 @@
+name: Release app
+run-name: Release version ${{ github.ref_name }}
+
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+  #workflow_dispatch:
+
+concurrency: ${{ github.workflow_ref }}
+
+env:
+  APP_NAME: peloche
+  APP_VER: ${{ github.ref_name }}
+
+jobs:
+  package-macOS-App:
+    runs-on: macos-latest
+    timeout-minutes: 2
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.2'
+      - name: Install fyne
+        run: |
+          go get fyne.io/fyne/v2@latest
+          go install fyne.io/tools/cmd/fyne@latest
+      - name: Install dependencies
+        run: go mod tidy
+      - name: Package app
+        run: sh etc/scripts/package-macos.sh
+      - uses: ncipollo/release-action@v1.16.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          tag: ${{ github.ref_name }}
+          commit: main
+          artifacts: output/peloche-${{ env.APP_VER }}-macos.dmg
