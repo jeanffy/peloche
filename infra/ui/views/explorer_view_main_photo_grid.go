@@ -5,6 +5,7 @@ import (
 	"peloche/infra/ui"
 	"peloche/infra/ui/events"
 	"peloche/infra/ui/layouts"
+	"peloche/infra/ui/widgets"
 	"slices"
 
 	"fyne.io/fyne/v2"
@@ -49,6 +50,9 @@ func NewExplorerViewMainPhotoGrid(appUIContext *ui.AppUIContext) *ExplorerViewMa
 		photoContainers: []*ExplorerViewMainPhotoContainer{},
 	}
 
+	// we should be using a GridWrap widget here but unfortunately, the fyne GridWrap widget
+	// "swallows" key press events with its TypedKey event
+	// so as a workaround, we use a GridWrap layout
 	x.scrollContainer = container.NewScroll(container.NewGridWrap(fyne.NewSize(0, 0)))
 	x.createLayout()
 
@@ -82,11 +86,18 @@ func (x *ExplorerViewMainPhotoGrid) onCurrentFolderChanged(event *events.EventCu
 			photo.loadBuffer()
 			fyne.Do(func() {
 				if photo.index < len(x.grid.Objects) {
-					x.grid.Objects[photo.index] = photo.UIContainer
+					x.grid.Objects[photo.index] = widgets.NewClickableThing(photo, photo.UIContainer, x.onPhotoSelected)
 				}
 			})
 		}
 	}()
+}
+
+func (x *ExplorerViewMainPhotoGrid) onPhotoSelected(photo *ExplorerViewMainPhotoContainer) {
+	currentIndex := x.appUIContext.SelectedPhotoIndex
+	if photo.index != currentIndex {
+		x.appUIContext.SetSelectedPhotoIndex(photo.index)
+	}
 }
 
 func (x *ExplorerViewMainPhotoGrid) onThumbnailSizeChanged(event *events.EventThumbnailSizeChangedParams) {
@@ -100,25 +111,6 @@ func (x *ExplorerViewMainPhotoGrid) onKeyPress(key *fyne.KeyEvent) {
 	} else if key.Name == fyne.KeySpace {
 		x.onSpaceBarPressed()
 	}
-}
-
-// ---------------------------------------------------------------------------
-// private
-// ---------------------------------------------------------------------------
-
-func (x *ExplorerViewMainPhotoGrid) createLayout() {
-	size := float32(x.appUIContext.GridSize)
-	x.layout = layouts.NewMyGridWrapLayout(fyne.NewSize(size, size)).(*layouts.GridWrapLayout)
-	x.grid = container.New(x.layout)
-	x.scrollContainer.Content = x.grid
-}
-
-func (x *ExplorerViewMainPhotoGrid) buildGridWithPhotos() {
-	x.grid.RemoveAll()
-	for _, photo := range x.photoContainers {
-		x.grid.Add(photo.UIContainer)
-	}
-	x.scrollContainer.Refresh()
 }
 
 func (x *ExplorerViewMainPhotoGrid) onArrowKeyPressed(keyName fyne.KeyName) {
@@ -148,11 +140,35 @@ func (x *ExplorerViewMainPhotoGrid) onArrowKeyPressed(keyName fyne.KeyName) {
 		nextIndex = indexMax
 	}
 
-	if nextIndex != x.appUIContext.SelectedPhotoIndex {
+	if nextIndex != currentIndex {
 		x.appUIContext.SetSelectedPhotoIndex(nextIndex)
+		// TODO: scroll to the selected photo
 	}
 }
 
 func (x *ExplorerViewMainPhotoGrid) onSpaceBarPressed() {
-	fmt.Println("editing", x.photoContainers[x.appUIContext.SelectedPhotoIndex])
+	x.editPhoto(x.photoContainers[x.appUIContext.SelectedPhotoIndex])
+}
+
+// ---------------------------------------------------------------------------
+// private
+// ---------------------------------------------------------------------------
+
+func (x *ExplorerViewMainPhotoGrid) createLayout() {
+	size := float32(x.appUIContext.GridSize)
+	x.layout = layouts.NewMyGridWrapLayout(fyne.NewSize(size, size)).(*layouts.GridWrapLayout)
+	x.grid = container.New(x.layout)
+	x.scrollContainer.Content = x.grid
+}
+
+func (x *ExplorerViewMainPhotoGrid) buildGridWithPhotos() {
+	x.grid.RemoveAll()
+	for _, photo := range x.photoContainers {
+		x.grid.Add(widgets.NewClickableThing(photo, photo.UIContainer, x.onPhotoSelected))
+	}
+	x.scrollContainer.Refresh()
+}
+
+func (x *ExplorerViewMainPhotoGrid) editPhoto(photo *ExplorerViewMainPhotoContainer) {
+	fmt.Println("editing photo", photo.index)
 }
