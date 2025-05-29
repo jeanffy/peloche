@@ -15,7 +15,7 @@ type AppData struct {
 	PhotoList         *PhotoList
 }
 
-func NewAppCore(log ports.LogPort, fs ports.FsPort) *AppData {
+func NewAppData(log ports.LogPort, fs ports.FsPort) *AppData {
 	return &AppData{
 		Log: log,
 		Fs:  fs,

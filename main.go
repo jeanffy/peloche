@@ -20,7 +20,7 @@ func main() {
 	log := adapters.NewLogAdapter()
 	fs := adapters.NewRealFsAdapter(log)
 
-	appData := domain.NewAppCore(log, fs)
+	appData := domain.NewAppData(log, fs)
 	appData.SetArgumentPath(argumentPath)
 
 	eventBus := events.NewSimpleEventBus()
