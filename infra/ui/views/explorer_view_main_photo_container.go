@@ -49,7 +49,7 @@ func NewExplorerViewMainPhotoContainer(appUIContext *context.AppUIContext, photo
 // ---------------------------------------------------------------------------
 
 func (x *ExplorerViewMainPhotoContainer) loadBuffer() {
-	x.photo.LoadBuffer(x.appUIContext.AppData.Log)
+	x.photo.LoadThumbnailBuffer(x.appUIContext.GridSizeMax)
 	x.loaded = true
 	x.refreshImageContainer()
 }

@@ -13,6 +13,8 @@ import (
 )
 
 type Photo struct {
+	log ports.LogPort
+
 	Name   string
 	Ext    string
 	Path   string
@@ -21,8 +23,9 @@ type Photo struct {
 	Buffer image.Image
 }
 
-func NewPhoto(name string, ext string, filePath string) *Photo {
+func NewPhoto(log ports.LogPort, name string, ext string, filePath string) *Photo {
 	return &Photo{
+		log:    log,
 		Name:   name,
 		Ext:    ext,
 		Path:   filePath,
@@ -32,17 +35,17 @@ func NewPhoto(name string, ext string, filePath string) *Photo {
 	}
 }
 
-func (x *Photo) LoadBuffer(log ports.LogPort) {
+func (x *Photo) LoadThumbnailBuffer(thumbnailSize uint) {
 	if x.Buffer == nil {
-		img := getDecodedPhoto(log, x.Path, x.Ext)
+		img := x.getDecodedPhoto(x.Path, x.Ext)
 		x.Buffer = img
 	}
 }
 
-func getDecodedPhoto(log ports.LogPort, filePath string, ext string) image.Image {
+func (x *Photo) getDecodedPhoto(filePath string, ext string) image.Image {
 	reader, err := os.Open(filePath)
 	if err != nil {
-		log.Error(ports.LogPortErrorParams{
+		x.log.Error(ports.LogPortErrorParams{
 			Module: reflect.TypeOf(PhotoList{}).Name(),
 			Error:  err,
 			Msg:    filePath,
@@ -57,7 +60,7 @@ func getDecodedPhoto(log ports.LogPort, filePath string, ext string) image.Image
 	if strings.ToLower(ext) == ".heic" {
 		img, err := goheif.Decode(reader)
 		if err != nil {
-			log.Error(ports.LogPortErrorParams{
+			x.log.Error(ports.LogPortErrorParams{
 				Module: reflect.TypeOf(PhotoList{}).Name(),
 				Error:  err,
 				Msg:    filePath,
@@ -68,7 +71,7 @@ func getDecodedPhoto(log ports.LogPort, filePath string, ext string) image.Image
 	} else {
 		img, _, err := image.Decode(reader)
 		if err != nil {
-			log.Error(ports.LogPortErrorParams{
+			x.log.Error(ports.LogPortErrorParams{
 				Module: reflect.TypeOf(PhotoList{}).Name(),
 				Error:  err,
 				Msg:    filePath,

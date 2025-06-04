@@ -2,7 +2,6 @@ package views
 
 import (
 	"peloche/infra/ui/context"
-	"peloche/infra/ui/events"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -29,14 +28,11 @@ func NewExplorerViewMainToolbar(appUIContext *context.AppUIContext) *ExplorerVie
 		appUIContext: appUIContext,
 	}
 
-	thumbnailSlider := widget.NewSlider(80, 500)
-	thumbnailSlider.SetValue(appUIContext.GridSize)
+	thumbnailSlider := widget.NewSlider(float64(appUIContext.GridSizeMin), float64(appUIContext.GridSizeMax))
+	thumbnailSlider.SetValue(float64(appUIContext.GridSize))
 
 	thumbnailSlider.OnChanged = func(size float64) {
-		x.appUIContext.GridSize = size
-		x.appUIContext.EventBus.Publish(events.EventThumbnailSizeChanged, &events.EventThumbnailSizeChangedParams{
-			Size: size,
-		})
+		x.appUIContext.SetGridSize(uint(size))
 	}
 
 	thumbnailSize := fyne.NewSize(150, thumbnailSlider.MinSize().Height)

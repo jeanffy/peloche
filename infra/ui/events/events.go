@@ -49,7 +49,7 @@ type EventCurrentFolderChangedParams struct {
 const EventThumbnailSizeChanged = "event.thumbnailSizeChanged"
 
 type EventThumbnailSizeChangedParams struct {
-	Size float64
+	Size uint
 }
 
 const EventSelectedPhotoChanged = "event.selectedPhotoChanged"

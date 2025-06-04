@@ -34,7 +34,7 @@ func NewPhotoList(log ports.LogPort, fs ports.FsPort, folderPath string) *PhotoL
 	for _, e := range entries {
 		if e.IsFile && slices.Contains(handledExtensions, strings.ToLower(e.Ext)) {
 			filePath := filepath.Join(folderPath, e.Name)
-			photos = append(photos, NewPhoto(e.Name, e.Ext, filePath))
+			photos = append(photos, NewPhoto(log, e.Name, e.Ext, filePath))
 		}
 	}
 

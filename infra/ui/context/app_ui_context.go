@@ -13,7 +13,9 @@ type AppUIContext struct {
 	EventBus           events.EventBus
 	AppData            *domain.AppData
 	ThemeVariant       fyne.ThemeVariant
-	GridSize           float64
+	GridSize           uint
+	GridSizeMin        uint
+	GridSizeMax        uint
 	SelectedPhotoIndex int
 }
 
@@ -24,6 +26,8 @@ func NewAppUIContext(fyneApp fyne.App, winManager AppUIContextWinManager, appDat
 		AppData:            appData,
 		ThemeVariant:       fyneApp.Settings().ThemeVariant(),
 		GridSize:           200,
+		GridSizeMin:        80,
+		GridSizeMax:        500,
 		SelectedPhotoIndex: -1,
 	}
 }
@@ -34,6 +38,13 @@ func (x *AppUIContext) LogInfo(params ports.LogPortParams) {
 
 func (x *AppUIContext) LogError(params ports.LogPortErrorParams) {
 	x.AppData.Log.Error(params)
+}
+
+func (x *AppUIContext) SetGridSize(size uint) {
+	x.GridSize = size
+	x.EventBus.Publish(events.EventThumbnailSizeChanged, &events.EventThumbnailSizeChangedParams{
+		Size: size,
+	})
 }
 
 func (x *AppUIContext) SetSelectedPhotoIndex(index int) {
