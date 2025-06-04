@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"peloche/domain"
 	"peloche/domain/ports"
-	"peloche/infra/ui"
+	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
 	"reflect"
 
@@ -43,7 +43,7 @@ values:
 type ExplorerViewLeftBarFolderTree struct {
 	UIContainer fyne.CanvasObject
 
-	appUIContext *ui.AppUIContext
+	appUIContext *context.AppUIContext
 
 	ids    map[string][]string
 	values map[string]string
@@ -56,7 +56,7 @@ type ExplorerViewLeftBarFolderTree struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewLeftBarFolderTree(appUIContext *ui.AppUIContext) *ExplorerViewLeftBarFolderTree {
+func NewExplorerViewLeftBarFolderTree(appUIContext *context.AppUIContext) *ExplorerViewLeftBarFolderTree {
 	x := &ExplorerViewLeftBarFolderTree{
 		appUIContext: appUIContext,
 		ids:          map[string][]string{},

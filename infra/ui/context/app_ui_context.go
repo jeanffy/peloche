@@ -1,4 +1,4 @@
-package ui
+package context
 
 import (
 	"peloche/domain"
@@ -9,8 +9,7 @@ import (
 )
 
 type AppUIContext struct {
-	FyneApp            fyne.App
-	FyneWin            fyne.Window
+	WinManager         AppUIContextWinManager
 	EventBus           events.EventBus
 	AppData            *domain.AppData
 	ThemeVariant       fyne.ThemeVariant
@@ -18,10 +17,9 @@ type AppUIContext struct {
 	SelectedPhotoIndex int
 }
 
-func NewAppUIContext(fyneApp fyne.App, fyneWin fyne.Window, appData *domain.AppData, eventBus events.EventBus) *AppUIContext {
+func NewAppUIContext(fyneApp fyne.App, winManager AppUIContextWinManager, appData *domain.AppData, eventBus events.EventBus) *AppUIContext {
 	return &AppUIContext{
-		FyneApp:            fyneApp,
-		FyneWin:            fyneWin,
+		WinManager:         winManager,
 		EventBus:           eventBus,
 		AppData:            appData,
 		ThemeVariant:       fyneApp.Settings().ThemeVariant(),

@@ -12,7 +12,7 @@ import (
 // definition
 // ---------------------------------------------------------------------------
 
-type ExplorerViewToolbar struct {
+type EditorViewToolbar struct {
 	UIContainer fyne.CanvasObject
 
 	appUIContext *context.AppUIContext
@@ -22,8 +22,8 @@ type ExplorerViewToolbar struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewToolbar(appUIContext *context.AppUIContext) *ExplorerViewToolbar {
-	instance := &ExplorerViewToolbar{
+func NewEditorViewToolbar(appUIContext *context.AppUIContext) *EditorViewToolbar {
+	instance := &EditorViewToolbar{
 		appUIContext: appUIContext,
 	}
 

@@ -1,7 +1,7 @@
 package views
 
 import (
-	"peloche/infra/ui"
+	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
 
 	"fyne.io/fyne/v2"
@@ -16,7 +16,8 @@ import (
 
 type ExplorerViewMain struct {
 	UIContainer    fyne.CanvasObject
-	appUIContext   *ui.AppUIContext
+	fyneWin        fyne.Window
+	appUIContext   *context.AppUIContext
 	progressDialog dialog.Dialog
 }
 
@@ -24,13 +25,14 @@ type ExplorerViewMain struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMain(appUIContext *ui.AppUIContext) *ExplorerViewMain {
+func NewExplorerViewMain(fyneWin fyne.Window, appUIContext *context.AppUIContext) *ExplorerViewMain {
 	x := &ExplorerViewMain{
 		appUIContext: appUIContext,
+		fyneWin:      fyneWin,
 	}
 
-	toolbar := NewExplorerViewMainToolbar(appUIContext)
-	photoGrid := NewExplorerViewMainPhotoGrid(x.appUIContext)
+	toolbar := NewExplorerViewMainToolbar(x.appUIContext)
+	photoGrid := NewExplorerViewMainPhotoGrid(fyneWin, x.appUIContext)
 
 	x.UIContainer = container.NewBorder(nil, toolbar.UIContainer, nil, nil, photoGrid.UIContainer)
 
@@ -53,7 +55,7 @@ func (x *ExplorerViewMain) onCurrentFolderChanging(event *events.EventCurrentFol
 	// 	Module: reflect.TypeOf(ExplorerViewMain{}).Name(),
 	// 	Msg:    "onCurrentFolderChanging " + event.CurrentFolderPath,
 	// })
-	x.progressDialog = dialog.NewCustomWithoutButtons("Loading photos...", widget.NewProgressBarInfinite(), x.appUIContext.FyneWin)
+	x.progressDialog = dialog.NewCustomWithoutButtons("Loading photos...", widget.NewProgressBarInfinite(), x.fyneWin)
 	x.progressDialog.Resize(fyne.NewSize(300, 50))
 	x.progressDialog.Show()
 }

@@ -5,16 +5,14 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 )
 
 // ---------------------------------------------------------------------------
 // definition
 // ---------------------------------------------------------------------------
 
-type ExplorerViewToolbar struct {
-	UIContainer fyne.CanvasObject
-
+type EditorView struct {
+	UIContainer  fyne.CanvasObject
 	appUIContext *context.AppUIContext
 }
 
@@ -22,17 +20,19 @@ type ExplorerViewToolbar struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewToolbar(appUIContext *context.AppUIContext) *ExplorerViewToolbar {
-	instance := &ExplorerViewToolbar{
+func NewEditorView(fyneWin fyne.Window, appUIContext *context.AppUIContext) *EditorView {
+	x := &EditorView{
 		appUIContext: appUIContext,
 	}
 
-	button1 := widget.NewButton("Some toolbar button", func() {
-		appUIContext.WinManager.MessageDialog("Some toolbar button clicked")
-	})
-	instance.UIContainer = container.NewHBox(button1)
+	toolbar := NewEditorViewToolbar(x.appUIContext)
+	main := NewEditorViewMain(x.appUIContext)
 
-	return instance
+	x.UIContainer = container.NewBorder(toolbar.UIContainer, nil, nil, nil, main.UIContainer)
+
+	fyneWin.Canvas().SetOnTypedKey(x.onKeyPress)
+
+	return x
 }
 
 // ---------------------------------------------------------------------------
@@ -42,6 +42,12 @@ func NewExplorerViewToolbar(appUIContext *context.AppUIContext) *ExplorerViewToo
 // ---------------------------------------------------------------------------
 // events
 // ---------------------------------------------------------------------------
+
+func (x *EditorView) onKeyPress(key *fyne.KeyEvent) {
+	if key.Name == fyne.KeyEscape {
+		x.appUIContext.WinManager.CloseEditorWindow()
+	}
+}
 
 // ---------------------------------------------------------------------------
 // private

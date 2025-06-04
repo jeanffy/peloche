@@ -2,13 +2,11 @@ package infra
 
 import (
 	"embed"
-	"fmt"
 	"peloche/domain"
 	"peloche/infra/ui"
+	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
-	"peloche/infra/ui/views"
 
-	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/lang"
 )
@@ -29,20 +27,8 @@ func (x *AppUI) Start(appData *domain.AppData, eventBus events.EventBus) {
 		panic(err)
 	}
 
-	fyneApp := app.New()
-	fyneWin := fyneApp.NewWindow("Peloche")
-
-	appUIContext := ui.NewAppUIContext(fyneApp, fyneWin, appData, eventBus)
-	content := views.NewExplorerView(appUIContext).UIContainer
-
-	fyneWin.SetContent(content)
-	fyneWin.Resize(fyne.NewSize(900, 600))
-
-	fyneWin.SetCloseIntercept(func() {
-		fmt.Println(fyneWin.Canvas().Size().Width)
-		fmt.Println(fyneWin.Canvas().Size().Height)
-		fyneWin.Close()
-	})
-
-	fyneWin.ShowAndRun()
+	app := app.New()
+	windowManager := ui.NewAppUIWindowManager(app)
+	appUIContext := context.NewAppUIContext(app, windowManager, appData, eventBus)
+	windowManager.CreateExplorerWindow(appUIContext)
 }

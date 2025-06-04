@@ -1,7 +1,7 @@
 package views
 
 import (
-	"peloche/infra/ui"
+	"peloche/infra/ui/context"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -13,21 +13,21 @@ import (
 
 type ExplorerView struct {
 	UIContainer  fyne.CanvasObject
-	appUIContext *ui.AppUIContext
+	appUIContext *context.AppUIContext
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerView(appUIContext *ui.AppUIContext) *ExplorerView {
+func NewExplorerView(fyneWin fyne.Window, appUIContext *context.AppUIContext) *ExplorerView {
 	x := &ExplorerView{
 		appUIContext: appUIContext,
 	}
 
 	toolbar := NewExplorerViewToolbar(x.appUIContext)
 	leftBar := NewExplorerViewLeftBar(x.appUIContext)
-	main := NewExplorerViewMain(x.appUIContext)
+	main := NewExplorerViewMain(fyneWin, x.appUIContext)
 
 	bottom := container.NewHSplit(leftBar.UIContainer, main.UIContainer)
 	bottom.Offset = 0.3

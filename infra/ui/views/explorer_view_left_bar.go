@@ -1,12 +1,11 @@
 package views
 
 import (
-	"peloche/infra/ui"
+	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/lang"
 	"fyne.io/fyne/v2/widget"
 
@@ -20,7 +19,7 @@ import (
 type ExplorerViewLeftBar struct {
 	UIContainer fyne.CanvasObject
 
-	appUIContext *ui.AppUIContext
+	appUIContext *context.AppUIContext
 
 	openFolderButton *widget.Button
 	tree             *widget.Tree
@@ -30,7 +29,7 @@ type ExplorerViewLeftBar struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewLeftBar(appUIContext *ui.AppUIContext) *ExplorerViewLeftBar {
+func NewExplorerViewLeftBar(appUIContext *context.AppUIContext) *ExplorerViewLeftBar {
 	x := &ExplorerViewLeftBar{
 		appUIContext: appUIContext,
 	}
@@ -61,7 +60,7 @@ func (x *ExplorerViewLeftBar) onOpenFolderClicked() {
 	directory, err := xdialog.Directory().Title(lang.L("views.explorer.openFolder")).Browse()
 	if err != nil {
 		if err != xdialog.ErrCancelled {
-			dialog.NewError(err, x.appUIContext.FyneWin).Show()
+			x.appUIContext.WinManager.ErrorDialog(err)
 		}
 		return
 	}

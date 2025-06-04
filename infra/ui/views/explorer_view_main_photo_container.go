@@ -3,8 +3,8 @@ package views
 import (
 	"image/color"
 	"peloche/domain"
-	"peloche/infra/ui"
 	"peloche/infra/ui/assets"
+	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
 
 	"fyne.io/fyne/v2"
@@ -15,7 +15,7 @@ import (
 
 type ExplorerViewMainPhotoContainer struct {
 	UIContainer  fyne.CanvasObject
-	appUIContext *ui.AppUIContext
+	appUIContext *context.AppUIContext
 	photo        *domain.Photo
 	index        int
 	image        *canvas.Image
@@ -27,7 +27,7 @@ type ExplorerViewMainPhotoContainer struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMainPhotoContainer(appUIContext *ui.AppUIContext, photo *domain.Photo, index int) *ExplorerViewMainPhotoContainer {
+func NewExplorerViewMainPhotoContainer(appUIContext *context.AppUIContext, photo *domain.Photo, index int) *ExplorerViewMainPhotoContainer {
 	x := &ExplorerViewMainPhotoContainer{
 		appUIContext: appUIContext,
 		photo:        photo,

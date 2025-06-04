@@ -1,7 +1,7 @@
 package views
 
 import (
-	"peloche/infra/ui"
+	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
 
 	"fyne.io/fyne/v2"
@@ -17,14 +17,14 @@ import (
 type ExplorerViewMainToolbar struct {
 	UIContainer fyne.CanvasObject
 
-	appUIContext *ui.AppUIContext
+	appUIContext *context.AppUIContext
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMainToolbar(appUIContext *ui.AppUIContext) *ExplorerViewMainToolbar {
+func NewExplorerViewMainToolbar(appUIContext *context.AppUIContext) *ExplorerViewMainToolbar {
 	x := &ExplorerViewMainToolbar{
 		appUIContext: appUIContext,
 	}

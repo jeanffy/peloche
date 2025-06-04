@@ -12,9 +12,8 @@ import (
 // definition
 // ---------------------------------------------------------------------------
 
-type ExplorerViewToolbar struct {
-	UIContainer fyne.CanvasObject
-
+type EditorViewMain struct {
+	UIContainer  fyne.CanvasObject
 	appUIContext *context.AppUIContext
 }
 
@@ -22,17 +21,14 @@ type ExplorerViewToolbar struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewToolbar(appUIContext *context.AppUIContext) *ExplorerViewToolbar {
-	instance := &ExplorerViewToolbar{
+func NewEditorViewMain(appUIContext *context.AppUIContext) *EditorViewMain {
+	x := &EditorViewMain{
 		appUIContext: appUIContext,
 	}
 
-	button1 := widget.NewButton("Some toolbar button", func() {
-		appUIContext.WinManager.MessageDialog("Some toolbar button clicked")
-	})
-	instance.UIContainer = container.NewHBox(button1)
+	x.UIContainer = container.NewVBox(widget.NewLabel("Editor view"))
 
-	return instance
+	return x
 }
 
 // ---------------------------------------------------------------------------
