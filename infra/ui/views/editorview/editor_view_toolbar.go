@@ -1,57 +1,47 @@
-package views
+package editorview
 
 import (
 	"peloche/infra/ui/context"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/widget"
 )
 
 // ---------------------------------------------------------------------------
 // definition
 // ---------------------------------------------------------------------------
 
-type EditorView struct {
-	UIContainer  fyne.CanvasObject
+type EditorViewToolbar struct {
+	UIContainer fyne.CanvasObject
+
 	appUIContext *context.AppUIContext
-	main         *EditorViewMain
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewEditorView(appUIContext *context.AppUIContext) *EditorView {
-	x := &EditorView{
+func NewEditorViewToolbar(appUIContext *context.AppUIContext) *EditorViewToolbar {
+	instance := &EditorViewToolbar{
 		appUIContext: appUIContext,
 	}
 
-	toolbar := NewEditorViewToolbar(x.appUIContext)
-	x.main = NewEditorViewMain(x.appUIContext)
+	button1 := widget.NewButton("Some toolbar button", func() {
+		appUIContext.ShowMessageBox("Some toolbar button clicked")
+	})
+	instance.UIContainer = container.NewHBox(button1)
 
-	x.UIContainer = container.NewBorder(toolbar.UIContainer, nil, nil, nil, x.main.UIContainer)
-
-	return x
+	return instance
 }
 
 // ---------------------------------------------------------------------------
 // public
 // ---------------------------------------------------------------------------
 
-func (x *EditorView) Activate(fyneWin fyne.Window, args ...interface{}) {
-	fyneWin.Canvas().SetOnTypedKey(x.onKeyPress)
-	x.main.Activate(fyneWin, args...)
-}
-
 // ---------------------------------------------------------------------------
 // events
 // ---------------------------------------------------------------------------
-
-func (x *EditorView) onKeyPress(key *fyne.KeyEvent) {
-	if key.Name == fyne.KeyEscape {
-		x.appUIContext.NavigateTo(context.RouteExplorer)
-	}
-}
 
 // ---------------------------------------------------------------------------
 // private

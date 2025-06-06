@@ -1,34 +1,35 @@
-package views
+package editorview
 
 import (
 	"peloche/infra/ui/context"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 )
 
 // ---------------------------------------------------------------------------
 // definition
 // ---------------------------------------------------------------------------
 
-type EditorViewMain struct {
+type EditorView struct {
 	UIContainer  fyne.CanvasObject
 	appUIContext *context.AppUIContext
-	label        *widget.Label
+	main         *EditorViewMain
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewEditorViewMain(appUIContext *context.AppUIContext) *EditorViewMain {
-	x := &EditorViewMain{
+func NewEditorView(appUIContext *context.AppUIContext) *EditorView {
+	x := &EditorView{
 		appUIContext: appUIContext,
 	}
 
-	x.label = widget.NewLabel("Editor view")
-	x.UIContainer = container.NewVBox(x.label)
+	toolbar := NewEditorViewToolbar(x.appUIContext)
+	x.main = NewEditorViewMain(x.appUIContext)
+
+	x.UIContainer = container.NewBorder(toolbar.UIContainer, nil, nil, nil, x.main.UIContainer)
 
 	return x
 }
@@ -37,14 +38,20 @@ func NewEditorViewMain(appUIContext *context.AppUIContext) *EditorViewMain {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *EditorViewMain) Activate(fyneWin fyne.Window, args ...interface{}) {
-	str := args[0].(*ExplorerViewMainPhotoContainer)
-	x.label.SetText(str.photo.Path)
+func (x *EditorView) Activate(fyneWin fyne.Window, args ...interface{}) {
+	fyneWin.Canvas().SetOnTypedKey(x.onKeyPress)
+	x.main.Activate(fyneWin, args...)
 }
 
 // ---------------------------------------------------------------------------
 // events
 // ---------------------------------------------------------------------------
+
+func (x *EditorView) onKeyPress(key *fyne.KeyEvent) {
+	if key.Name == fyne.KeyEscape {
+		x.appUIContext.NavigateTo(context.RouteExplorer)
+	}
+}
 
 // ---------------------------------------------------------------------------
 // private

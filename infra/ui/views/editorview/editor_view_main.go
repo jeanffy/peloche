@@ -1,11 +1,11 @@
-package views
+package editorview
 
 import (
+	"peloche/domain"
 	"peloche/infra/ui/context"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -13,30 +13,23 @@ import (
 // definition
 // ---------------------------------------------------------------------------
 
-type ExplorerViewMainToolbar struct {
-	UIContainer fyne.CanvasObject
-
+type EditorViewMain struct {
+	UIContainer  fyne.CanvasObject
 	appUIContext *context.AppUIContext
+	label        *widget.Label
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMainToolbar(appUIContext *context.AppUIContext) *ExplorerViewMainToolbar {
-	x := &ExplorerViewMainToolbar{
+func NewEditorViewMain(appUIContext *context.AppUIContext) *EditorViewMain {
+	x := &EditorViewMain{
 		appUIContext: appUIContext,
 	}
 
-	thumbnailSlider := widget.NewSlider(float64(appUIContext.GridSizeMin), float64(appUIContext.GridSizeMax))
-	thumbnailSlider.SetValue(float64(appUIContext.GridSize))
-
-	thumbnailSlider.OnChanged = func(size float64) {
-		x.appUIContext.SetGridSize(uint(size))
-	}
-
-	thumbnailSize := fyne.NewSize(150, thumbnailSlider.MinSize().Height)
-	x.UIContainer = container.NewHBox(layout.NewSpacer(), container.NewGridWrap(thumbnailSize, thumbnailSlider))
+	x.label = widget.NewLabel("Editor view")
+	x.UIContainer = container.NewVBox(x.label)
 
 	return x
 }
@@ -44,6 +37,11 @@ func NewExplorerViewMainToolbar(appUIContext *context.AppUIContext) *ExplorerVie
 // ---------------------------------------------------------------------------
 // public
 // ---------------------------------------------------------------------------
+
+func (x *EditorViewMain) Activate(fyneWin fyne.Window, args ...interface{}) {
+	photo := args[0].(*domain.Photo)
+	x.label.SetText(photo.Path)
+}
 
 // ---------------------------------------------------------------------------
 // events

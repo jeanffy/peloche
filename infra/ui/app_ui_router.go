@@ -2,7 +2,8 @@ package ui
 
 import (
 	"peloche/infra/ui/context"
-	"peloche/infra/ui/views"
+	"peloche/infra/ui/views/editorview"
+	"peloche/infra/ui/views/explorerview"
 
 	"fyne.io/fyne/v2"
 )
@@ -14,7 +15,7 @@ import (
 type AppUIRouter struct {
 	fyneWin      fyne.Window
 	appUIContext *context.AppUIContext
-	explorerView *views.ExplorerView
+	explorerView *explorerview.ExplorerView
 }
 
 // ---------------------------------------------------------------------------
@@ -57,14 +58,14 @@ func (x *AppUIRouter) NavigateTo(route context.Route, args ...interface{}) {
 
 func (x *AppUIRouter) goToExplorerView(args ...interface{}) {
 	if x.explorerView == nil {
-		x.explorerView = views.NewExplorerView(x.appUIContext)
+		x.explorerView = explorerview.NewExplorerView(x.appUIContext)
 	}
 	x.fyneWin.SetContent(x.explorerView.UIContainer)
 	x.explorerView.Activate(x.fyneWin, args...)
 }
 
 func (x *AppUIRouter) goToEditorView(args ...interface{}) {
-	view := views.NewEditorView(x.appUIContext)
+	view := editorview.NewEditorView(x.appUIContext)
 	x.fyneWin.SetContent(view.UIContainer)
 	view.Activate(x.fyneWin, args...)
 }

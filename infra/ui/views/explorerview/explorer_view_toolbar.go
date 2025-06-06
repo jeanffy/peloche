@@ -1,4 +1,4 @@
-package views
+package explorerview
 
 import (
 	"peloche/infra/ui/context"
@@ -12,7 +12,7 @@ import (
 // definition
 // ---------------------------------------------------------------------------
 
-type EditorViewToolbar struct {
+type ExplorerViewToolbar struct {
 	UIContainer fyne.CanvasObject
 
 	appUIContext *context.AppUIContext
@@ -22,8 +22,8 @@ type EditorViewToolbar struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewEditorViewToolbar(appUIContext *context.AppUIContext) *EditorViewToolbar {
-	instance := &EditorViewToolbar{
+func NewExplorerViewToolbar(appUIContext *context.AppUIContext) *ExplorerViewToolbar {
+	instance := &ExplorerViewToolbar{
 		appUIContext: appUIContext,
 	}
 

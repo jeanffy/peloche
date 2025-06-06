@@ -1,7 +1,6 @@
-package views
+package explorerview
 
 import (
-	"fmt"
 	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
 	"peloche/infra/ui/layouts"
@@ -180,7 +179,6 @@ func (x *ExplorerViewMainPhotoGrid) buildGridWithPhotos() {
 	x.scrollContainer.Refresh()
 }
 
-func (x *ExplorerViewMainPhotoGrid) editPhoto(photo *ExplorerViewMainPhotoContainer) {
-	fmt.Println("editing photo", photo.index)
-	x.appUIContext.NavigateTo(context.RouteEditor, photo)
+func (x *ExplorerViewMainPhotoGrid) editPhoto(photoContainer *ExplorerViewMainPhotoContainer) {
+	x.appUIContext.NavigateTo(context.RouteEditor, photoContainer.photo)
 }

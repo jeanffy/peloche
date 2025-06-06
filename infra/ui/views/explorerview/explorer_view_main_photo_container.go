@@ -1,4 +1,4 @@
-package views
+package explorerview
 
 import (
 	"image/color"

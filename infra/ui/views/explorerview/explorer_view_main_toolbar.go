@@ -1,39 +1,42 @@
-package views
+package explorerview
 
 import (
 	"peloche/infra/ui/context"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/widget"
 )
 
 // ---------------------------------------------------------------------------
 // definition
 // ---------------------------------------------------------------------------
 
-type ExplorerView struct {
-	UIContainer  fyne.CanvasObject
+type ExplorerViewMainToolbar struct {
+	UIContainer fyne.CanvasObject
+
 	appUIContext *context.AppUIContext
-	main         *ExplorerViewMain
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerView(appUIContext *context.AppUIContext) *ExplorerView {
-	x := &ExplorerView{
+func NewExplorerViewMainToolbar(appUIContext *context.AppUIContext) *ExplorerViewMainToolbar {
+	x := &ExplorerViewMainToolbar{
 		appUIContext: appUIContext,
 	}
 
-	toolbar := NewExplorerViewToolbar(x.appUIContext)
-	leftBar := NewExplorerViewLeftBar(x.appUIContext)
-	x.main = NewExplorerViewMain(x.appUIContext)
+	thumbnailSlider := widget.NewSlider(float64(appUIContext.GridSizeMin), float64(appUIContext.GridSizeMax))
+	thumbnailSlider.SetValue(float64(appUIContext.GridSize))
 
-	bottom := container.NewHSplit(leftBar.UIContainer, x.main.UIContainer)
-	bottom.Offset = 0.3
+	thumbnailSlider.OnChanged = func(size float64) {
+		x.appUIContext.SetGridSize(uint(size))
+	}
 
-	x.UIContainer = container.NewBorder(toolbar.UIContainer, nil, nil, nil, bottom)
+	thumbnailSize := fyne.NewSize(150, thumbnailSlider.MinSize().Height)
+	x.UIContainer = container.NewHBox(layout.NewSpacer(), container.NewGridWrap(thumbnailSize, thumbnailSlider))
 
 	return x
 }
@@ -41,10 +44,6 @@ func NewExplorerView(appUIContext *context.AppUIContext) *ExplorerView {
 // ---------------------------------------------------------------------------
 // public
 // ---------------------------------------------------------------------------
-
-func (x *ExplorerView) Activate(fyneWin fyne.Window, args ...interface{}) {
-	x.main.Activate(fyneWin)
-}
 
 // ---------------------------------------------------------------------------
 // events

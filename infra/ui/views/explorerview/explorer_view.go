@@ -1,43 +1,50 @@
-package views
+package explorerview
 
 import (
 	"peloche/infra/ui/context"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 )
 
 // ---------------------------------------------------------------------------
 // definition
 // ---------------------------------------------------------------------------
 
-type ExplorerViewToolbar struct {
-	UIContainer fyne.CanvasObject
-
+type ExplorerView struct {
+	UIContainer  fyne.CanvasObject
 	appUIContext *context.AppUIContext
+	main         *ExplorerViewMain
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewToolbar(appUIContext *context.AppUIContext) *ExplorerViewToolbar {
-	instance := &ExplorerViewToolbar{
+func NewExplorerView(appUIContext *context.AppUIContext) *ExplorerView {
+	x := &ExplorerView{
 		appUIContext: appUIContext,
 	}
 
-	button1 := widget.NewButton("Some toolbar button", func() {
-		appUIContext.ShowMessageBox("Some toolbar button clicked")
-	})
-	instance.UIContainer = container.NewHBox(button1)
+	toolbar := NewExplorerViewToolbar(x.appUIContext)
+	leftBar := NewExplorerViewLeftBar(x.appUIContext)
+	x.main = NewExplorerViewMain(x.appUIContext)
 
-	return instance
+	bottom := container.NewHSplit(leftBar.UIContainer, x.main.UIContainer)
+	bottom.Offset = 0.3
+
+	x.UIContainer = container.NewBorder(toolbar.UIContainer, nil, nil, nil, bottom)
+
+	return x
 }
 
 // ---------------------------------------------------------------------------
 // public
 // ---------------------------------------------------------------------------
+
+func (x *ExplorerView) Activate(fyneWin fyne.Window, args ...interface{}) {
+	x.main.Activate(fyneWin)
+}
 
 // ---------------------------------------------------------------------------
 // events
