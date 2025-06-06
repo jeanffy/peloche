@@ -12,7 +12,7 @@ import (
 // definition
 // ---------------------------------------------------------------------------
 
-type AppUIDialogs struct {
+type UIDialogs struct {
 	fyneApp fyne.App
 	router  routing.Router
 }
@@ -21,8 +21,8 @@ type AppUIDialogs struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewAppUIDialogs(fyneApp fyne.App, router routing.Router) *AppUIDialogs {
-	return &AppUIDialogs{
+func NewUIDialogs(fyneApp fyne.App, router routing.Router) *UIDialogs {
+	return &UIDialogs{
 		fyneApp: fyneApp,
 		router:  router,
 	}
@@ -32,12 +32,12 @@ func NewAppUIDialogs(fyneApp fyne.App, router routing.Router) *AppUIDialogs {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *AppUIDialogs) MessageDialog(msg string) {
+func (x *UIDialogs) MessageDialog(msg string) {
 	sdialog.Message("%s", msg).Info()
 	// FIXME: when dialog is closed, parent window does not get the focus back
 }
 
-func (x *AppUIDialogs) ErrorDialog(err error) {
+func (x *UIDialogs) ErrorDialog(err error) {
 	parent := x.router.GetCurrentWindow()
 	dialog.NewError(err, parent).Show()
 }

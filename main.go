@@ -25,5 +25,5 @@ func main() {
 
 	eventBus := events.NewSimpleEventBus()
 
-	infra.NewAppUI().Start(appData, eventBus)
+	infra.NewUI().Start(appData, eventBus)
 }

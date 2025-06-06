@@ -16,14 +16,14 @@ import (
 //go:embed translation
 var translations embed.FS
 
-type AppUI struct {
+type UI struct {
 }
 
-func NewAppUI() *AppUI {
-	return &AppUI{}
+func NewUI() *UI {
+	return &UI{}
 }
 
-func (x *AppUI) Start(appData *domain.AppData, eventBus events.EventBus) {
+func (x *UI) Start(appData *domain.AppData, eventBus events.EventBus) {
 	err := lang.AddTranslationsFS(translations, "translation")
 	if err != nil {
 		panic(err)
@@ -43,7 +43,7 @@ func (x *AppUI) Start(appData *domain.AppData, eventBus events.EventBus) {
 	})
 
 	router := ui.NewAppUIRouter(win)
-	dialogs := ui.NewAppUIDialogs(app, router)
+	dialogs := ui.NewUIDialogs(app, router)
 	appUIContext := context.NewUIContext(app, dialogs, router, appData, eventBus)
 	router.SetAppUIContext(appUIContext)
 	router.NavigateToExplorerView()
