@@ -38,8 +38,7 @@ func NewEditorViewMain(appUIContext *context.UIContext) *EditorViewMain {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *EditorViewMain) Activate(fyneWin fyne.Window, args ...interface{}) {
-	photo := args[0].(*domain.Photo)
+func (x *EditorViewMain) Activate(fyneWin fyne.Window, photo *domain.Photo) {
 	x.label.SetText(photo.Path)
 }
 

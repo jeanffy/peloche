@@ -1,6 +1,10 @@
 package routing
 
-import "fyne.io/fyne/v2"
+import (
+	"peloche/domain"
+
+	"fyne.io/fyne/v2"
+)
 
 type RouteName int8
 
@@ -11,5 +15,6 @@ const (
 
 type Router interface {
 	GetCurrentWindow() fyne.Window
-	NavigateTo(route RouteName, args ...interface{})
+	NavigateToExplorerView()
+	NavigateToEditorView(photo *domain.Photo)
 }

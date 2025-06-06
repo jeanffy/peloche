@@ -86,8 +86,12 @@ func (x *UIContext) SetSelectedPhotoIndex(index int) {
 	})
 }
 
-func (x *UIContext) NavigateTo(route routing.RouteName, args ...interface{}) {
-	x.router.NavigateTo(route, args...)
+func (x *UIContext) NavigateToExplorerView() {
+	x.router.NavigateToExplorerView()
+}
+
+func (x *UIContext) NavigateToEditorView(photo *domain.Photo) {
+	x.router.NavigateToEditorView(photo)
 }
 
 func (x *UIContext) GetCurrentWindow() fyne.Window {

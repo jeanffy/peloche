@@ -7,7 +7,6 @@ import (
 	"peloche/infra/ui"
 	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
-	"peloche/infra/ui/routing"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -47,7 +46,7 @@ func (x *AppUI) Start(appData *domain.AppData, eventBus events.EventBus) {
 	dialogs := ui.NewAppUIDialogs(app, router)
 	appUIContext := context.NewUIContext(app, dialogs, router, appData, eventBus)
 	router.SetAppUIContext(appUIContext)
-	router.NavigateTo(routing.RouteExplorer)
+	router.NavigateToExplorerView()
 
 	win.ShowAndRun()
 }

@@ -4,7 +4,6 @@ import (
 	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
 	"peloche/infra/ui/layouts"
-	"peloche/infra/ui/routing"
 	"peloche/infra/ui/widgets"
 	"slices"
 
@@ -181,5 +180,5 @@ func (x *ExplorerViewMainPhotoGrid) buildGridWithPhotos() {
 }
 
 func (x *ExplorerViewMainPhotoGrid) editPhoto(photoContainer *ExplorerViewMainPhotoContainer) {
-	x.appUIContext.NavigateTo(routing.RouteEditor, photoContainer.photo)
+	x.appUIContext.NavigateToEditorView(photoContainer.photo)
 }
