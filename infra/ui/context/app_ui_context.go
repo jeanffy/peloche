@@ -84,8 +84,8 @@ func (x *AppUIContext) SetSelectedPhotoIndex(index int) {
 	})
 }
 
-func (x *AppUIContext) NavigateTo(route Route) {
-	x.router.NavigateTo(route)
+func (x *AppUIContext) NavigateTo(route Route, args ...interface{}) {
+	x.router.NavigateTo(route, args...)
 }
 
 func (x *AppUIContext) GetCurrentWindow() fyne.Window {

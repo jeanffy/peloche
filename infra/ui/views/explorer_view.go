@@ -42,7 +42,7 @@ func NewExplorerView(appUIContext *context.AppUIContext) *ExplorerView {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *ExplorerView) Activate(fyneWin fyne.Window) {
+func (x *ExplorerView) Activate(fyneWin fyne.Window, args ...interface{}) {
 	x.main.Activate(fyneWin)
 }
 

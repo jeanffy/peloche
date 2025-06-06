@@ -14,6 +14,7 @@ import (
 type EditorView struct {
 	UIContainer  fyne.CanvasObject
 	appUIContext *context.AppUIContext
+	main         *EditorViewMain
 }
 
 // ---------------------------------------------------------------------------
@@ -26,9 +27,9 @@ func NewEditorView(appUIContext *context.AppUIContext) *EditorView {
 	}
 
 	toolbar := NewEditorViewToolbar(x.appUIContext)
-	main := NewEditorViewMain(x.appUIContext)
+	x.main = NewEditorViewMain(x.appUIContext)
 
-	x.UIContainer = container.NewBorder(toolbar.UIContainer, nil, nil, nil, main.UIContainer)
+	x.UIContainer = container.NewBorder(toolbar.UIContainer, nil, nil, nil, x.main.UIContainer)
 
 	return x
 }
@@ -37,8 +38,9 @@ func NewEditorView(appUIContext *context.AppUIContext) *EditorView {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *EditorView) Activate(fyneWin fyne.Window) {
+func (x *EditorView) Activate(fyneWin fyne.Window, args ...interface{}) {
 	fyneWin.Canvas().SetOnTypedKey(x.onKeyPress)
+	x.main.Activate(fyneWin, args...)
 }
 
 // ---------------------------------------------------------------------------

@@ -15,6 +15,7 @@ import (
 type EditorViewMain struct {
 	UIContainer  fyne.CanvasObject
 	appUIContext *context.AppUIContext
+	label        *widget.Label
 }
 
 // ---------------------------------------------------------------------------
@@ -26,7 +27,8 @@ func NewEditorViewMain(appUIContext *context.AppUIContext) *EditorViewMain {
 		appUIContext: appUIContext,
 	}
 
-	x.UIContainer = container.NewVBox(widget.NewLabel("Editor view"))
+	x.label = widget.NewLabel("Editor view")
+	x.UIContainer = container.NewVBox(x.label)
 
 	return x
 }
@@ -34,6 +36,11 @@ func NewEditorViewMain(appUIContext *context.AppUIContext) *EditorViewMain {
 // ---------------------------------------------------------------------------
 // public
 // ---------------------------------------------------------------------------
+
+func (x *EditorViewMain) Activate(fyneWin fyne.Window, args ...interface{}) {
+	str := args[0].(*ExplorerViewMainPhotoContainer)
+	x.label.SetText(str.photo.Path)
+}
 
 // ---------------------------------------------------------------------------
 // events

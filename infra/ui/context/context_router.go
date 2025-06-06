@@ -11,5 +11,5 @@ const (
 
 type ContextRouter interface {
 	GetCurrentWindow() fyne.Window
-	NavigateTo(route Route)
+	NavigateTo(route Route, args ...interface{})
 }

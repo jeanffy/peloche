@@ -39,11 +39,11 @@ func (x *AppUIRouter) GetCurrentWindow() fyne.Window {
 	return x.fyneWin
 }
 
-func (x *AppUIRouter) NavigateTo(route context.Route) {
+func (x *AppUIRouter) NavigateTo(route context.Route, args ...interface{}) {
 	if route == context.RouteExplorer {
-		x.goToExplorerView()
+		x.goToExplorerView(args...)
 	} else if route == context.RouteEditor {
-		x.goToEditorView()
+		x.goToEditorView(args...)
 	}
 }
 
@@ -55,16 +55,16 @@ func (x *AppUIRouter) NavigateTo(route context.Route) {
 // private
 // ---------------------------------------------------------------------------
 
-func (x *AppUIRouter) goToExplorerView() {
+func (x *AppUIRouter) goToExplorerView(args ...interface{}) {
 	if x.explorerView == nil {
 		x.explorerView = views.NewExplorerView(x.appUIContext)
 	}
 	x.fyneWin.SetContent(x.explorerView.UIContainer)
-	x.explorerView.Activate(x.fyneWin)
+	x.explorerView.Activate(x.fyneWin, args...)
 }
 
-func (x *AppUIRouter) goToEditorView() {
+func (x *AppUIRouter) goToEditorView(args ...interface{}) {
 	view := views.NewEditorView(x.appUIContext)
 	x.fyneWin.SetContent(view.UIContainer)
-	view.Activate(x.fyneWin)
+	view.Activate(x.fyneWin, args...)
 }

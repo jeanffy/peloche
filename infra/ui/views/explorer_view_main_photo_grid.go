@@ -182,5 +182,5 @@ func (x *ExplorerViewMainPhotoGrid) buildGridWithPhotos() {
 
 func (x *ExplorerViewMainPhotoGrid) editPhoto(photo *ExplorerViewMainPhotoContainer) {
 	fmt.Println("editing photo", photo.index)
-	x.appUIContext.NavigateTo(context.RouteEditor)
+	x.appUIContext.NavigateTo(context.RouteEditor, photo)
 }
