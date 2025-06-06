@@ -43,7 +43,7 @@ values:
 type ExplorerViewLeftBarFolderTree struct {
 	UIContainer fyne.CanvasObject
 
-	appUIContext *context.AppUIContext
+	appUIContext *context.UIContext
 
 	ids    map[string][]string
 	values map[string]string
@@ -56,7 +56,7 @@ type ExplorerViewLeftBarFolderTree struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewLeftBarFolderTree(appUIContext *context.AppUIContext) *ExplorerViewLeftBarFolderTree {
+func NewExplorerViewLeftBarFolderTree(appUIContext *context.UIContext) *ExplorerViewLeftBarFolderTree {
 	x := &ExplorerViewLeftBarFolderTree{
 		appUIContext: appUIContext,
 		ids:          map[string][]string{},

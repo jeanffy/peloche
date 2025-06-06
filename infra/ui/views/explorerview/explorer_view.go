@@ -13,7 +13,7 @@ import (
 
 type ExplorerView struct {
 	UIContainer  fyne.CanvasObject
-	appUIContext *context.AppUIContext
+	appUIContext *context.UIContext
 	main         *ExplorerViewMain
 }
 
@@ -21,7 +21,7 @@ type ExplorerView struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerView(appUIContext *context.AppUIContext) *ExplorerView {
+func NewExplorerView(appUIContext *context.UIContext) *ExplorerView {
 	x := &ExplorerView{
 		appUIContext: appUIContext,
 	}

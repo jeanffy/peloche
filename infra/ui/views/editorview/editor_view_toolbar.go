@@ -15,14 +15,14 @@ import (
 type EditorViewToolbar struct {
 	UIContainer fyne.CanvasObject
 
-	appUIContext *context.AppUIContext
+	appUIContext *context.UIContext
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewEditorViewToolbar(appUIContext *context.AppUIContext) *EditorViewToolbar {
+func NewEditorViewToolbar(appUIContext *context.UIContext) *EditorViewToolbar {
 	instance := &EditorViewToolbar{
 		appUIContext: appUIContext,
 	}

@@ -3,7 +3,9 @@ package context
 import (
 	"peloche/domain"
 	"peloche/domain/ports"
+	"peloche/infra/ui/dialogs"
 	"peloche/infra/ui/events"
+	"peloche/infra/ui/routing"
 
 	"fyne.io/fyne/v2"
 )
@@ -12,9 +14,9 @@ import (
 // definition
 // ---------------------------------------------------------------------------
 
-type AppUIContext struct {
-	dialogs            ContextDialogs
-	router             ContextRouter
+type UIContext struct {
+	dialogs            dialogs.Dialogs
+	router             routing.Router
 	eventBus           events.EventBus
 	appData            *domain.AppData
 	ThemeVariant       fyne.ThemeVariant
@@ -28,8 +30,8 @@ type AppUIContext struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewAppUIContext(fyneApp fyne.App, dialogs ContextDialogs, router ContextRouter, appData *domain.AppData, eventBus events.EventBus) *AppUIContext {
-	return &AppUIContext{
+func NewUIContext(fyneApp fyne.App, dialogs dialogs.Dialogs, router routing.Router, appData *domain.AppData, eventBus events.EventBus) *UIContext {
+	return &UIContext{
 		dialogs:            dialogs,
 		router:             router,
 		eventBus:           eventBus,
@@ -46,65 +48,65 @@ func NewAppUIContext(fyneApp fyne.App, dialogs ContextDialogs, router ContextRou
 // public
 // ---------------------------------------------------------------------------
 
-func (x *AppUIContext) ShowMessageBox(message string) {
+func (x *UIContext) ShowMessageBox(message string) {
 	x.dialogs.MessageDialog(message)
 }
 
-func (x *AppUIContext) ShowErrorDialog(err error) {
+func (x *UIContext) ShowErrorDialog(err error) {
 	x.dialogs.ErrorDialog(err)
 }
 
-func (x *AppUIContext) LogInfo(params ports.LogPortParams) {
+func (x *UIContext) LogInfo(params ports.LogPortParams) {
 	x.appData.Log.Info(params)
 }
 
-func (x *AppUIContext) LogError(params ports.LogPortErrorParams) {
+func (x *UIContext) LogError(params ports.LogPortErrorParams) {
 	x.appData.Log.Error(params)
 }
 
-func (x *AppUIContext) SubscribeToEvent(id string, fn interface{}) {
+func (x *UIContext) SubscribeToEvent(id string, fn interface{}) {
 	x.eventBus.Subscribe(id, fn)
 }
 
-func (x *AppUIContext) PublishEvent(id string, args ...interface{}) {
+func (x *UIContext) PublishEvent(id string, args ...interface{}) {
 	x.eventBus.Publish(id, args...)
 }
 
-func (x *AppUIContext) SetGridSize(size uint) {
+func (x *UIContext) SetGridSize(size uint) {
 	x.GridSize = size
 	x.eventBus.Publish(events.EventThumbnailSizeChanged, &events.EventThumbnailSizeChangedParams{
 		Size: size,
 	})
 }
 
-func (x *AppUIContext) SetSelectedPhotoIndex(index int) {
+func (x *UIContext) SetSelectedPhotoIndex(index int) {
 	x.SelectedPhotoIndex = index
 	x.eventBus.Publish(events.EventSelectedPhotoChanged, &events.EventSelectedPhotoChangedParams{
 		Index: index,
 	})
 }
 
-func (x *AppUIContext) NavigateTo(route Route, args ...interface{}) {
+func (x *UIContext) NavigateTo(route routing.RouteName, args ...interface{}) {
 	x.router.NavigateTo(route, args...)
 }
 
-func (x *AppUIContext) GetCurrentWindow() fyne.Window {
+func (x *UIContext) GetCurrentWindow() fyne.Window {
 	return x.router.GetCurrentWindow()
 }
 
-func (x *AppUIContext) GetFolderTree() *domain.FolderTree {
+func (x *UIContext) GetFolderTree() *domain.FolderTree {
 	return x.appData.FolderTree
 }
 
-func (x *AppUIContext) SetRootFolder(rootFolderPath *string) {
+func (x *UIContext) SetRootFolder(rootFolderPath *string) {
 	x.appData.SetRootFolder(rootFolderPath)
 }
 
-func (x *AppUIContext) SetCurrentFolder(folderPath *string) {
+func (x *UIContext) SetCurrentFolder(folderPath *string) {
 	x.appData.SetCurrentFolder(folderPath)
 }
 
-func (x *AppUIContext) GetPhotoList() *domain.PhotoList {
+func (x *UIContext) GetPhotoList() *domain.PhotoList {
 	return x.appData.PhotoList
 }
 

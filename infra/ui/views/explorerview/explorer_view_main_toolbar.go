@@ -16,14 +16,14 @@ import (
 type ExplorerViewMainToolbar struct {
 	UIContainer fyne.CanvasObject
 
-	appUIContext *context.AppUIContext
+	appUIContext *context.UIContext
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMainToolbar(appUIContext *context.AppUIContext) *ExplorerViewMainToolbar {
+func NewExplorerViewMainToolbar(appUIContext *context.UIContext) *ExplorerViewMainToolbar {
 	x := &ExplorerViewMainToolbar{
 		appUIContext: appUIContext,
 	}

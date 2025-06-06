@@ -16,7 +16,7 @@ import (
 
 type ExplorerViewMain struct {
 	UIContainer    fyne.CanvasObject
-	appUIContext   *context.AppUIContext
+	appUIContext   *context.UIContext
 	progressDialog dialog.Dialog
 	photoGrid      *ExplorerViewMainPhotoGrid
 }
@@ -25,7 +25,7 @@ type ExplorerViewMain struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMain(appUIContext *context.AppUIContext) *ExplorerViewMain {
+func NewExplorerViewMain(appUIContext *context.UIContext) *ExplorerViewMain {
 	x := &ExplorerViewMain{
 		appUIContext: appUIContext,
 	}

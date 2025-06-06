@@ -15,7 +15,7 @@ import (
 
 type EditorViewMain struct {
 	UIContainer  fyne.CanvasObject
-	appUIContext *context.AppUIContext
+	appUIContext *context.UIContext
 	label        *widget.Label
 }
 
@@ -23,7 +23,7 @@ type EditorViewMain struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewEditorViewMain(appUIContext *context.AppUIContext) *EditorViewMain {
+func NewEditorViewMain(appUIContext *context.UIContext) *EditorViewMain {
 	x := &EditorViewMain{
 		appUIContext: appUIContext,
 	}

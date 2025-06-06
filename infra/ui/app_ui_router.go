@@ -2,6 +2,7 @@ package ui
 
 import (
 	"peloche/infra/ui/context"
+	"peloche/infra/ui/routing"
 	"peloche/infra/ui/views/editorview"
 	"peloche/infra/ui/views/explorerview"
 
@@ -14,7 +15,7 @@ import (
 
 type AppUIRouter struct {
 	fyneWin      fyne.Window
-	appUIContext *context.AppUIContext
+	appUIContext *context.UIContext
 	explorerView *explorerview.ExplorerView
 }
 
@@ -32,7 +33,7 @@ func NewAppUIRouter(fyneWin fyne.Window) *AppUIRouter {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *AppUIRouter) SetAppUIContext(appUIContext *context.AppUIContext) {
+func (x *AppUIRouter) SetAppUIContext(appUIContext *context.UIContext) {
 	x.appUIContext = appUIContext
 }
 
@@ -40,10 +41,10 @@ func (x *AppUIRouter) GetCurrentWindow() fyne.Window {
 	return x.fyneWin
 }
 
-func (x *AppUIRouter) NavigateTo(route context.Route, args ...interface{}) {
-	if route == context.RouteExplorer {
+func (x *AppUIRouter) NavigateTo(route routing.RouteName, args ...interface{}) {
+	if route == routing.RouteExplorer {
 		x.goToExplorerView(args...)
-	} else if route == context.RouteEditor {
+	} else if route == routing.RouteEditor {
 		x.goToEditorView(args...)
 	}
 }

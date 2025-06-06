@@ -19,7 +19,7 @@ import (
 type ExplorerViewLeftBar struct {
 	UIContainer fyne.CanvasObject
 
-	appUIContext *context.AppUIContext
+	appUIContext *context.UIContext
 
 	openFolderButton *widget.Button
 	tree             *widget.Tree
@@ -29,7 +29,7 @@ type ExplorerViewLeftBar struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewLeftBar(appUIContext *context.AppUIContext) *ExplorerViewLeftBar {
+func NewExplorerViewLeftBar(appUIContext *context.UIContext) *ExplorerViewLeftBar {
 	x := &ExplorerViewLeftBar{
 		appUIContext: appUIContext,
 	}

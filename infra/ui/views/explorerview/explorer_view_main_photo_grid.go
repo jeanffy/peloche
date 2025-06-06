@@ -4,6 +4,7 @@ import (
 	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
 	"peloche/infra/ui/layouts"
+	"peloche/infra/ui/routing"
 	"peloche/infra/ui/widgets"
 	"slices"
 
@@ -30,7 +31,7 @@ import (
 type ExplorerViewMainPhotoGrid struct {
 	UIContainer fyne.CanvasObject
 
-	appUIContext *context.AppUIContext
+	appUIContext *context.UIContext
 
 	photoContainers []*ExplorerViewMainPhotoContainer
 
@@ -45,7 +46,7 @@ type ExplorerViewMainPhotoGrid struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMainPhotoGrid(appUIContext *context.AppUIContext) *ExplorerViewMainPhotoGrid {
+func NewExplorerViewMainPhotoGrid(appUIContext *context.UIContext) *ExplorerViewMainPhotoGrid {
 	x := &ExplorerViewMainPhotoGrid{
 		appUIContext:    appUIContext,
 		photoContainers: []*ExplorerViewMainPhotoContainer{},
@@ -180,5 +181,5 @@ func (x *ExplorerViewMainPhotoGrid) buildGridWithPhotos() {
 }
 
 func (x *ExplorerViewMainPhotoGrid) editPhoto(photoContainer *ExplorerViewMainPhotoContainer) {
-	x.appUIContext.NavigateTo(context.RouteEditor, photoContainer.photo)
+	x.appUIContext.NavigateTo(routing.RouteEditor, photoContainer.photo)
 }

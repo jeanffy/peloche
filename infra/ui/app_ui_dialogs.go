@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"peloche/infra/ui/context"
+	"peloche/infra/ui/routing"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/dialog"
@@ -14,14 +14,14 @@ import (
 
 type AppUIDialogs struct {
 	fyneApp fyne.App
-	router  context.ContextRouter
+	router  routing.Router
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewAppUIDialogs(fyneApp fyne.App, router context.ContextRouter) *AppUIDialogs {
+func NewAppUIDialogs(fyneApp fyne.App, router routing.Router) *AppUIDialogs {
 	return &AppUIDialogs{
 		fyneApp: fyneApp,
 		router:  router,

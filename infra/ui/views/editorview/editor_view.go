@@ -2,6 +2,7 @@ package editorview
 
 import (
 	"peloche/infra/ui/context"
+	"peloche/infra/ui/routing"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -13,7 +14,7 @@ import (
 
 type EditorView struct {
 	UIContainer  fyne.CanvasObject
-	appUIContext *context.AppUIContext
+	appUIContext *context.UIContext
 	main         *EditorViewMain
 }
 
@@ -21,7 +22,7 @@ type EditorView struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewEditorView(appUIContext *context.AppUIContext) *EditorView {
+func NewEditorView(appUIContext *context.UIContext) *EditorView {
 	x := &EditorView{
 		appUIContext: appUIContext,
 	}
@@ -49,7 +50,7 @@ func (x *EditorView) Activate(fyneWin fyne.Window, args ...interface{}) {
 
 func (x *EditorView) onKeyPress(key *fyne.KeyEvent) {
 	if key.Name == fyne.KeyEscape {
-		x.appUIContext.NavigateTo(context.RouteExplorer)
+		x.appUIContext.NavigateTo(routing.RouteExplorer)
 	}
 }
 

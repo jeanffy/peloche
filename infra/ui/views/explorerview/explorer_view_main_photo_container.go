@@ -15,7 +15,7 @@ import (
 
 type ExplorerViewMainPhotoContainer struct {
 	UIContainer  fyne.CanvasObject
-	appUIContext *context.AppUIContext
+	appUIContext *context.UIContext
 	photo        *domain.Photo
 	index        int
 	image        *canvas.Image
@@ -27,7 +27,7 @@ type ExplorerViewMainPhotoContainer struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMainPhotoContainer(appUIContext *context.AppUIContext, photo *domain.Photo, index int) *ExplorerViewMainPhotoContainer {
+func NewExplorerViewMainPhotoContainer(appUIContext *context.UIContext, photo *domain.Photo, index int) *ExplorerViewMainPhotoContainer {
 	x := &ExplorerViewMainPhotoContainer{
 		appUIContext: appUIContext,
 		photo:        photo,

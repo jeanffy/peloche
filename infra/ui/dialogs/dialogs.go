@@ -1,6 +1,6 @@
-package context
+package dialogs
 
-type ContextDialogs interface {
+type Dialogs interface {
 	MessageDialog(msg string)
 	ErrorDialog(err error)
 }
