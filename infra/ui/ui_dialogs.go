@@ -2,6 +2,7 @@ package ui
 
 import (
 	"peloche/infra/ui/routing"
+	"peloche/utils"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/dialog"
@@ -21,10 +22,10 @@ type UIDialogs struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewUIDialogs(fyneApp fyne.App, router routing.Router) *UIDialogs {
+func NewUIDialogs() *UIDialogs {
 	return &UIDialogs{
-		fyneApp: fyneApp,
-		router:  router,
+		fyneApp: utils.GetNaiveDI().Resolve("FyneApp").(fyne.App),
+		router:  utils.GetNaiveDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
 	}
 }
 

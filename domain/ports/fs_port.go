@@ -1,5 +1,7 @@
 package ports
 
+var FS_PORT_TOKEN = "FsPort"
+
 type FsPortEntry struct {
 	IsDir      bool
 	IsFile     bool

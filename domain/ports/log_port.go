@@ -1,5 +1,7 @@
 package ports
 
+var LOG_PORT_TOKEN = "LogPort"
+
 type LogPortParams struct {
 	Module string
 	Msg    string

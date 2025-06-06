@@ -1,7 +1,8 @@
 package editorview
 
 import (
-	"peloche/infra/ui/context"
+	"peloche/infra/ui/dialogs"
+	"peloche/utils"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -13,26 +14,26 @@ import (
 // ---------------------------------------------------------------------------
 
 type EditorViewToolbar struct {
-	UIContainer fyne.CanvasObject
+	dialogs dialogs.Dialogs
 
-	appUIContext *context.UIContext
+	UIContainer fyne.CanvasObject
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewEditorViewToolbar(appUIContext *context.UIContext) *EditorViewToolbar {
-	instance := &EditorViewToolbar{
-		appUIContext: appUIContext,
+func NewEditorViewToolbar() *EditorViewToolbar {
+	x := &EditorViewToolbar{
+		dialogs: utils.GetNaiveDI().Resolve(dialogs.DIALOGS_TOKEN).(dialogs.Dialogs),
 	}
 
 	button1 := widget.NewButton("Some toolbar button", func() {
-		appUIContext.ShowMessageBox("Some toolbar button clicked")
+		x.dialogs.MessageDialog("Some toolbar button clicked")
 	})
-	instance.UIContainer = container.NewHBox(button1)
+	x.UIContainer = container.NewHBox(button1)
 
-	return instance
+	return x
 }
 
 // ---------------------------------------------------------------------------

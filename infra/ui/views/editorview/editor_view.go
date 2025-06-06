@@ -2,7 +2,8 @@ package editorview
 
 import (
 	"peloche/domain"
-	"peloche/infra/ui/context"
+	"peloche/infra/ui/routing"
+	"peloche/utils"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -13,22 +14,24 @@ import (
 // ---------------------------------------------------------------------------
 
 type EditorView struct {
-	UIContainer  fyne.CanvasObject
-	appUIContext *context.UIContext
-	main         *EditorViewMain
+	router routing.Router
+
+	UIContainer fyne.CanvasObject
+
+	main *EditorViewMain
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewEditorView(appUIContext *context.UIContext) *EditorView {
+func NewEditorView() *EditorView {
 	x := &EditorView{
-		appUIContext: appUIContext,
+		router: utils.GetNaiveDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
 	}
 
-	toolbar := NewEditorViewToolbar(x.appUIContext)
-	x.main = NewEditorViewMain(x.appUIContext)
+	toolbar := NewEditorViewToolbar()
+	x.main = NewEditorViewMain()
 
 	x.UIContainer = container.NewBorder(toolbar.UIContainer, nil, nil, nil, x.main.UIContainer)
 
@@ -50,7 +53,7 @@ func (x *EditorView) Activate(fyneWin fyne.Window, photo *domain.Photo) {
 
 func (x *EditorView) onKeyPress(key *fyne.KeyEvent) {
 	if key.Name == fyne.KeyEscape {
-		x.appUIContext.NavigateToExplorerView()
+		x.router.NavigateToExplorerView()
 	}
 }
 

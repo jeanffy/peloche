@@ -3,6 +3,7 @@ package domain
 import (
 	"path/filepath"
 	"peloche/domain/ports"
+	"peloche/utils"
 	"reflect"
 )
 
@@ -12,7 +13,7 @@ type FolderTree struct {
 	SubFolders []*FolderTree
 }
 
-func NewFolderTree(log ports.LogPort, fs ports.FsPort, folderPath string, level int) *FolderTree {
+func NewFolderTree(folderPath string, level int) *FolderTree {
 	if level > 5 {
 		return &FolderTree{
 			Name:       filepath.Base(folderPath),
@@ -20,6 +21,9 @@ func NewFolderTree(log ports.LogPort, fs ports.FsPort, folderPath string, level 
 			SubFolders: []*FolderTree{},
 		}
 	}
+
+	log := utils.GetNaiveDI().Resolve(ports.LOG_PORT_TOKEN).(ports.LogPort)
+	fs := utils.GetNaiveDI().Resolve(ports.FS_PORT_TOKEN).(ports.FsPort)
 
 	entries, err := fs.ReadDir(folderPath)
 	if err != nil {
@@ -39,7 +43,7 @@ func NewFolderTree(log ports.LogPort, fs ports.FsPort, folderPath string, level 
 	for _, e := range entries {
 		if e.IsDir {
 			subFolderPath := filepath.Join(folderPath, e.Name)
-			subFolderTree := NewFolderTree(log, fs, subFolderPath, level+1)
+			subFolderTree := NewFolderTree(subFolderPath, level+1)
 			subFolders = append(subFolders, subFolderTree)
 		}
 	}

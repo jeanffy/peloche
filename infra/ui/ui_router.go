@@ -2,7 +2,6 @@ package ui
 
 import (
 	"peloche/domain"
-	"peloche/infra/ui/context"
 	"peloche/infra/ui/views/editorview"
 	"peloche/infra/ui/views/explorerview"
 
@@ -13,9 +12,8 @@ import (
 // definition
 // ---------------------------------------------------------------------------
 
-type AppUIRouter struct {
+type UIRouter struct {
 	fyneWin      fyne.Window
-	appUIContext *context.UIContext
 	explorerView *explorerview.ExplorerView
 }
 
@@ -23,8 +21,8 @@ type AppUIRouter struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewAppUIRouter(fyneWin fyne.Window) *AppUIRouter {
-	return &AppUIRouter{
+func NewUIRouter(fyneWin fyne.Window) *UIRouter {
+	return &UIRouter{
 		fyneWin: fyneWin,
 	}
 }
@@ -33,24 +31,20 @@ func NewAppUIRouter(fyneWin fyne.Window) *AppUIRouter {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *AppUIRouter) SetAppUIContext(appUIContext *context.UIContext) {
-	x.appUIContext = appUIContext
-}
-
-func (x *AppUIRouter) GetCurrentWindow() fyne.Window {
+func (x *UIRouter) GetCurrentWindow() fyne.Window {
 	return x.fyneWin
 }
 
-func (x *AppUIRouter) NavigateToExplorerView() {
+func (x *UIRouter) NavigateToExplorerView() {
 	if x.explorerView == nil {
-		x.explorerView = explorerview.NewExplorerView(x.appUIContext)
+		x.explorerView = explorerview.NewExplorerView()
 	}
 	x.fyneWin.SetContent(x.explorerView.UIContainer)
 	x.explorerView.Activate(x.fyneWin)
 }
 
-func (x *AppUIRouter) NavigateToEditorView(photo *domain.Photo) {
-	view := editorview.NewEditorView(x.appUIContext)
+func (x *UIRouter) NavigateToEditorView(photo *domain.Photo) {
+	view := editorview.NewEditorView()
 	x.fyneWin.SetContent(view.UIContainer)
 	view.Activate(x.fyneWin, photo)
 }

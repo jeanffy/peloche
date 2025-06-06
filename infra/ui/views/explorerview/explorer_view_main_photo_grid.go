@@ -1,10 +1,13 @@
 package explorerview
 
 import (
+	"peloche/domain"
 	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
 	"peloche/infra/ui/layouts"
+	"peloche/infra/ui/routing"
 	"peloche/infra/ui/widgets"
+	"peloche/utils"
 	"slices"
 
 	"fyne.io/fyne/v2"
@@ -28,26 +31,30 @@ import (
 // ---------------------------------------------------------------------------
 
 type ExplorerViewMainPhotoGrid struct {
+	uiContext *context.UIContext
+	eventBus  events.EventBus
+	appData   *domain.AppData
+	router    routing.Router
+
 	UIContainer fyne.CanvasObject
 
-	appUIContext *context.UIContext
-
 	photoContainers []*ExplorerViewMainPhotoContainer
-
 	scrollContainer *container.Scroll
 	layout          *layouts.GridWrapLayout
 	grid            *fyne.Container
-
-	currentRow int
+	currentRow      int
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMainPhotoGrid(appUIContext *context.UIContext) *ExplorerViewMainPhotoGrid {
+func NewExplorerViewMainPhotoGrid() *ExplorerViewMainPhotoGrid {
 	x := &ExplorerViewMainPhotoGrid{
-		appUIContext:    appUIContext,
+		uiContext:       utils.GetNaiveDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
+		eventBus:        utils.GetNaiveDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+		appData:         utils.GetNaiveDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
+		router:          utils.GetNaiveDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
 		photoContainers: []*ExplorerViewMainPhotoContainer{},
 		currentRow:      0,
 	}
@@ -60,8 +67,8 @@ func NewExplorerViewMainPhotoGrid(appUIContext *context.UIContext) *ExplorerView
 
 	x.UIContainer = x.scrollContainer
 
-	x.appUIContext.SubscribeToEvent(events.EventCurrentFolderChanged, x.onCurrentFolderChanged)
-	x.appUIContext.SubscribeToEvent(events.EventThumbnailSizeChanged, x.onThumbnailSizeChanged)
+	x.eventBus.Subscribe(events.EventCurrentFolderChanged, x.onCurrentFolderChanged)
+	x.eventBus.Subscribe(events.EventThumbnailSizeChanged, x.onThumbnailSizeChanged)
 
 	return x
 }
@@ -79,9 +86,9 @@ func (x *ExplorerViewMainPhotoGrid) Activate(fyneWin fyne.Window) {
 // ---------------------------------------------------------------------------
 
 func (x *ExplorerViewMainPhotoGrid) onCurrentFolderChanged(event *events.EventCurrentFolderChangedParams) {
-	x.photoContainers = make([]*ExplorerViewMainPhotoContainer, len(x.appUIContext.GetPhotoList().Photos))
-	for i, photo := range x.appUIContext.GetPhotoList().Photos {
-		x.photoContainers[i] = NewExplorerViewMainPhotoContainer(x.appUIContext, photo, i)
+	x.photoContainers = make([]*ExplorerViewMainPhotoContainer, len(x.appData.PhotoList.Photos))
+	for i, photo := range x.appData.PhotoList.Photos {
+		x.photoContainers[i] = NewExplorerViewMainPhotoContainer(photo, i)
 	}
 
 	x.buildGridWithPhotos()
@@ -99,9 +106,9 @@ func (x *ExplorerViewMainPhotoGrid) onCurrentFolderChanged(event *events.EventCu
 }
 
 func (x *ExplorerViewMainPhotoGrid) onPhotoSelected(photo *ExplorerViewMainPhotoContainer) {
-	currentIndex := x.appUIContext.SelectedPhotoIndex
+	currentIndex := x.uiContext.SelectedPhotoIndex
 	if photo.index != currentIndex {
-		x.appUIContext.SetSelectedPhotoIndex(photo.index)
+		x.uiContext.SetSelectedPhotoIndex(photo.index)
 	}
 }
 
@@ -120,7 +127,7 @@ func (x *ExplorerViewMainPhotoGrid) onKeyPress(key *fyne.KeyEvent) {
 
 func (x *ExplorerViewMainPhotoGrid) onArrowKeyPressed(keyName fyne.KeyName) {
 	indexMax := len(x.photoContainers) - 1
-	currentIndex := x.appUIContext.SelectedPhotoIndex
+	currentIndex := x.uiContext.SelectedPhotoIndex
 	var nextIndex = currentIndex
 
 	if keyName == fyne.KeyLeft {
@@ -146,7 +153,7 @@ func (x *ExplorerViewMainPhotoGrid) onArrowKeyPressed(keyName fyne.KeyName) {
 	}
 
 	if nextIndex != currentIndex {
-		x.appUIContext.SetSelectedPhotoIndex(nextIndex)
+		x.uiContext.SetSelectedPhotoIndex(nextIndex)
 		// // TODO: scroll to the selected photo
 		// x.currentRow = int(x.layout.ColCount / nextIndex)
 		// fmt.Println(x.currentRow)
@@ -155,8 +162,8 @@ func (x *ExplorerViewMainPhotoGrid) onArrowKeyPressed(keyName fyne.KeyName) {
 }
 
 func (x *ExplorerViewMainPhotoGrid) onSpaceBarPressed() {
-	if x.appUIContext.SelectedPhotoIndex != -1 {
-		x.editPhoto(x.photoContainers[x.appUIContext.SelectedPhotoIndex])
+	if x.uiContext.SelectedPhotoIndex != -1 {
+		x.editPhoto(x.photoContainers[x.uiContext.SelectedPhotoIndex])
 	}
 }
 
@@ -165,7 +172,7 @@ func (x *ExplorerViewMainPhotoGrid) onSpaceBarPressed() {
 // ---------------------------------------------------------------------------
 
 func (x *ExplorerViewMainPhotoGrid) createLayout() {
-	size := float32(x.appUIContext.GridSize)
+	size := float32(x.uiContext.GridSize)
 	x.layout = layouts.NewMyGridWrapLayout(fyne.NewSize(size, size)).(*layouts.GridWrapLayout)
 	x.grid = container.New(x.layout)
 	x.scrollContainer.Content = x.grid
@@ -180,5 +187,5 @@ func (x *ExplorerViewMainPhotoGrid) buildGridWithPhotos() {
 }
 
 func (x *ExplorerViewMainPhotoGrid) editPhoto(photoContainer *ExplorerViewMainPhotoContainer) {
-	x.appUIContext.NavigateToEditorView(photoContainer.photo)
+	x.router.NavigateToEditorView(photoContainer.photo)
 }

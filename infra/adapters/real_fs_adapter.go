@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"peloche/domain/ports"
+	"peloche/utils"
 	"reflect"
 )
 
@@ -11,9 +12,9 @@ type RealFsAdapter struct {
 	log ports.LogPort
 }
 
-func NewRealFsAdapter(log ports.LogPort) *RealFsAdapter {
+func NewRealFsAdapter() *RealFsAdapter {
 	return &RealFsAdapter{
-		log: log,
+		log: utils.GetNaiveDI().Resolve(ports.LOG_PORT_TOKEN).(ports.LogPort),
 	}
 }
 

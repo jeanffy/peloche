@@ -1,7 +1,8 @@
 package explorerview
 
 import (
-	"peloche/infra/ui/context"
+	"peloche/infra/ui/dialogs"
+	"peloche/utils"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -14,21 +15,19 @@ import (
 
 type ExplorerViewToolbar struct {
 	UIContainer fyne.CanvasObject
-
-	appUIContext *context.UIContext
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewToolbar(appUIContext *context.UIContext) *ExplorerViewToolbar {
-	instance := &ExplorerViewToolbar{
-		appUIContext: appUIContext,
-	}
+func NewExplorerViewToolbar() *ExplorerViewToolbar {
+	instance := &ExplorerViewToolbar{}
+
+	dialogs := utils.GetNaiveDI().Resolve(dialogs.DIALOGS_TOKEN).(dialogs.Dialogs)
 
 	button1 := widget.NewButton("Some toolbar button", func() {
-		appUIContext.ShowMessageBox("Some toolbar button clicked")
+		dialogs.MessageDialog("Some toolbar button clicked")
 	})
 	instance.UIContainer = container.NewHBox(button1)
 

@@ -3,6 +3,7 @@ package domain
 import (
 	"path/filepath"
 	"peloche/domain/ports"
+	"peloche/utils"
 	"reflect"
 	"slices"
 	"strings"
@@ -11,13 +12,13 @@ import (
 var handledExtensions = []string{".heic", ".jpg", ".jpeg"}
 
 type PhotoList struct {
-	log ports.LogPort
-	fs  ports.FsPort
-
 	Photos []*Photo
 }
 
-func NewPhotoList(log ports.LogPort, fs ports.FsPort, folderPath string) *PhotoList {
+func NewPhotoList(folderPath string) *PhotoList {
+	log := utils.GetNaiveDI().Resolve(ports.LOG_PORT_TOKEN).(ports.LogPort)
+	fs := utils.GetNaiveDI().Resolve(ports.FS_PORT_TOKEN).(ports.FsPort)
+
 	entries, err := fs.ReadDir(folderPath)
 	if err != nil {
 		log.Error(ports.LogPortErrorParams{
@@ -34,13 +35,11 @@ func NewPhotoList(log ports.LogPort, fs ports.FsPort, folderPath string) *PhotoL
 	for _, e := range entries {
 		if e.IsFile && slices.Contains(handledExtensions, strings.ToLower(e.Ext)) {
 			filePath := filepath.Join(folderPath, e.Name)
-			photos = append(photos, NewPhoto(log, e.Name, e.Ext, filePath))
+			photos = append(photos, NewPhoto(e.Name, e.Ext, filePath))
 		}
 	}
 
 	return &PhotoList{
-		log:    log,
-		fs:     fs,
 		Photos: photos,
 	}
 }

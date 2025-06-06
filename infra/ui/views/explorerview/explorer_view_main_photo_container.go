@@ -6,6 +6,7 @@ import (
 	"peloche/infra/ui/assets"
 	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
+	"peloche/utils"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -14,32 +15,36 @@ import (
 )
 
 type ExplorerViewMainPhotoContainer struct {
-	UIContainer  fyne.CanvasObject
-	appUIContext *context.UIContext
-	photo        *domain.Photo
-	index        int
-	image        *canvas.Image
-	loaded       bool
-	selected     bool
+	uiContext *context.UIContext
+	eventBus  events.EventBus
+
+	UIContainer fyne.CanvasObject
+
+	photo    *domain.Photo
+	index    int
+	image    *canvas.Image
+	loaded   bool
+	selected bool
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMainPhotoContainer(appUIContext *context.UIContext, photo *domain.Photo, index int) *ExplorerViewMainPhotoContainer {
+func NewExplorerViewMainPhotoContainer(photo *domain.Photo, index int) *ExplorerViewMainPhotoContainer {
 	x := &ExplorerViewMainPhotoContainer{
-		appUIContext: appUIContext,
-		photo:        photo,
-		index:        index,
-		loaded:       false,
-		selected:     false,
+		uiContext: utils.GetNaiveDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
+		eventBus:  utils.GetNaiveDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+		photo:     photo,
+		index:     index,
+		loaded:    false,
+		selected:  false,
 	}
 
 	x.UIContainer = container.NewStack()
 	x.refreshImageContainer()
 
-	x.appUIContext.SubscribeToEvent(events.EventSelectedPhotoChanged, x.onSelectedPhotoIndexChanged)
+	x.eventBus.Subscribe(events.EventSelectedPhotoChanged, x.onSelectedPhotoIndexChanged)
 
 	return x
 }
@@ -49,7 +54,7 @@ func NewExplorerViewMainPhotoContainer(appUIContext *context.UIContext, photo *d
 // ---------------------------------------------------------------------------
 
 func (x *ExplorerViewMainPhotoContainer) loadBuffer() {
-	x.photo.LoadThumbnailBuffer(x.appUIContext.GridSizeMax)
+	x.photo.LoadThumbnailBuffer(x.uiContext.GridSizeMax)
 	x.loaded = true
 	x.refreshImageContainer()
 }
@@ -84,7 +89,7 @@ func (x *ExplorerViewMainPhotoContainer) refreshImageContainer() {
 	x.image.FillMode = canvas.ImageFillContain
 
 	var fillColor color.Color
-	if x.appUIContext.ThemeVariant == theme.VariantDark {
+	if x.uiContext.ThemeVariant == theme.VariantDark {
 		fillColor = color.Black
 	} else {
 		fillColor = color.Gray16{0x888f}

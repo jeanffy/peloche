@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"peloche/domain"
 	"peloche/domain/ports"
-	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
+	"peloche/utils"
 	"reflect"
 
 	"fyne.io/fyne/v2"
@@ -41,13 +41,14 @@ values:
 // ---------------------------------------------------------------------------
 
 type ExplorerViewLeftBarFolderTree struct {
+	logPort  ports.LogPort
+	eventBus events.EventBus
+	appData  *domain.AppData
+
 	UIContainer fyne.CanvasObject
 
-	appUIContext *context.UIContext
-
-	ids    map[string][]string
-	values map[string]string
-
+	ids         map[string][]string
+	values      map[string]string
 	treeBinding binding.ExternalStringTree
 	tree        *widget.Tree
 }
@@ -56,11 +57,13 @@ type ExplorerViewLeftBarFolderTree struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewLeftBarFolderTree(appUIContext *context.UIContext) *ExplorerViewLeftBarFolderTree {
+func NewExplorerViewLeftBarFolderTree() *ExplorerViewLeftBarFolderTree {
 	x := &ExplorerViewLeftBarFolderTree{
-		appUIContext: appUIContext,
-		ids:          map[string][]string{},
-		values:       map[string]string{},
+		eventBus: utils.GetNaiveDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+		logPort:  utils.GetNaiveDI().Resolve(ports.LOG_PORT_TOKEN).(ports.LogPort),
+		appData:  utils.GetNaiveDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
+		ids:      map[string][]string{},
+		values:   map[string]string{},
 	}
 
 	x.treeBinding = binding.BindStringTree(&x.ids, &x.values)
@@ -89,9 +92,9 @@ func NewExplorerViewLeftBarFolderTree(appUIContext *context.UIContext) *Explorer
 	)
 
 	x.tree.OnSelected = func(id string) {
-		folder := x.appUIContext.GetFolderTree().Find(id)
+		folder := x.appData.FolderTree.Find(id)
 		if folder == nil {
-			x.appUIContext.LogError(ports.LogPortErrorParams{
+			x.logPort.Error(ports.LogPortErrorParams{
 				Module: reflect.TypeOf(ExplorerViewLeftBarFolderTree{}).Name(),
 				Error:  fmt.Errorf("no folder found for id '%s'", id),
 			})
@@ -102,7 +105,7 @@ func NewExplorerViewLeftBarFolderTree(appUIContext *context.UIContext) *Explorer
 
 	x.UIContainer = x.tree
 
-	x.appUIContext.SubscribeToEvent(events.EventRootFolderChanged, x.onRootFolderChanged)
+	x.eventBus.Subscribe(events.EventRootFolderChanged, x.onRootFolderChanged)
 
 	return x
 }
@@ -118,8 +121,8 @@ func NewExplorerViewLeftBarFolderTree(appUIContext *context.UIContext) *Explorer
 func (x *ExplorerViewLeftBarFolderTree) onRootFolderChanged(event *events.EventRootFolderChangedParams) {
 	ids := map[string][]string{}
 	values := map[string]string{}
-	createTreeBindingIds(x.appUIContext.GetFolderTree(), &ids, true)
-	createTreeBindingValues(x.appUIContext.GetFolderTree(), &values)
+	createTreeBindingIds(x.appData.FolderTree, &ids, true)
+	createTreeBindingValues(x.appData.FolderTree, &values)
 	x.treeBinding.Set(ids, values)
 	x.tree.OpenBranch(ids[""][0])
 	x.tree.Refresh()
@@ -128,18 +131,18 @@ func (x *ExplorerViewLeftBarFolderTree) onRootFolderChanged(event *events.EventR
 func (x *ExplorerViewLeftBarFolderTree) onTreeItemClicked(folder *domain.FolderTree) {
 	folderPath := folder.Path
 
-	x.appUIContext.PublishEvent(events.EventCurrentFolderChanging, &events.EventCurrentFolderChangingParams{
+	x.eventBus.Publish(events.EventCurrentFolderChanging, &events.EventCurrentFolderChangingParams{
 		CurrentFolderPath: folderPath,
 	})
 
 	// setting the current folder in a go routine to keep the UI reactive
 	// and to let the previous event be published to subscribers
 	go func() {
-		x.appUIContext.SetCurrentFolder(&folderPath)
+		x.appData.SetCurrentFolder(&folderPath)
 
-		x.appUIContext.PublishEvent(events.EventCurrentFolderChanged, &events.EventCurrentFolderChangedParams{
+		x.eventBus.Publish(events.EventCurrentFolderChanged, &events.EventCurrentFolderChangedParams{
 			CurrentFolderPath: folderPath,
-			PhotoList:         x.appUIContext.GetPhotoList(),
+			PhotoList:         x.appData.PhotoList,
 		})
 	}()
 }

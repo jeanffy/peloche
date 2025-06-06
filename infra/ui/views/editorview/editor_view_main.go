@@ -2,7 +2,6 @@ package editorview
 
 import (
 	"peloche/domain"
-	"peloche/infra/ui/context"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -14,19 +13,17 @@ import (
 // ---------------------------------------------------------------------------
 
 type EditorViewMain struct {
-	UIContainer  fyne.CanvasObject
-	appUIContext *context.UIContext
-	label        *widget.Label
+	UIContainer fyne.CanvasObject
+
+	label *widget.Label
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewEditorViewMain(appUIContext *context.UIContext) *EditorViewMain {
-	x := &EditorViewMain{
-		appUIContext: appUIContext,
-	}
+func NewEditorViewMain() *EditorViewMain {
+	x := &EditorViewMain{}
 
 	x.label = widget.NewLabel("Editor view")
 	x.UIContainer = container.NewVBox(x.label)

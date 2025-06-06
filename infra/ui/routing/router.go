@@ -6,6 +6,8 @@ import (
 	"fyne.io/fyne/v2"
 )
 
+var ROUTER_TOKEN = "Router"
+
 type RouteName int8
 
 const (

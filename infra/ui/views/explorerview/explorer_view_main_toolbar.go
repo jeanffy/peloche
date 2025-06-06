@@ -2,6 +2,7 @@ package explorerview
 
 import (
 	"peloche/infra/ui/context"
+	"peloche/utils"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -14,25 +15,25 @@ import (
 // ---------------------------------------------------------------------------
 
 type ExplorerViewMainToolbar struct {
-	UIContainer fyne.CanvasObject
+	uiContext *context.UIContext
 
-	appUIContext *context.UIContext
+	UIContainer fyne.CanvasObject
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMainToolbar(appUIContext *context.UIContext) *ExplorerViewMainToolbar {
+func NewExplorerViewMainToolbar() *ExplorerViewMainToolbar {
 	x := &ExplorerViewMainToolbar{
-		appUIContext: appUIContext,
+		uiContext: utils.GetNaiveDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
 	}
 
-	thumbnailSlider := widget.NewSlider(float64(appUIContext.GridSizeMin), float64(appUIContext.GridSizeMax))
-	thumbnailSlider.SetValue(float64(appUIContext.GridSize))
+	thumbnailSlider := widget.NewSlider(float64(x.uiContext.GridSizeMin), float64(x.uiContext.GridSizeMax))
+	thumbnailSlider.SetValue(float64(x.uiContext.GridSize))
 
 	thumbnailSlider.OnChanged = func(size float64) {
-		x.appUIContext.SetGridSize(uint(size))
+		x.uiContext.SetGridSize(uint(size))
 	}
 
 	thumbnailSize := fyne.NewSize(150, thumbnailSlider.MinSize().Height)

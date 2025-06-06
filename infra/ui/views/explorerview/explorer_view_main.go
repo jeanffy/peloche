@@ -3,6 +3,8 @@ package explorerview
 import (
 	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
+	"peloche/infra/ui/routing"
+	"peloche/utils"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -15,8 +17,11 @@ import (
 // ---------------------------------------------------------------------------
 
 type ExplorerViewMain struct {
+	uiContext *context.UIContext
+	eventBus  events.EventBus
+	router    routing.Router
+
 	UIContainer    fyne.CanvasObject
-	appUIContext   *context.UIContext
 	progressDialog dialog.Dialog
 	photoGrid      *ExplorerViewMainPhotoGrid
 }
@@ -25,18 +30,20 @@ type ExplorerViewMain struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMain(appUIContext *context.UIContext) *ExplorerViewMain {
+func NewExplorerViewMain() *ExplorerViewMain {
 	x := &ExplorerViewMain{
-		appUIContext: appUIContext,
+		uiContext: utils.GetNaiveDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
+		eventBus:  utils.GetNaiveDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+		router:    utils.GetNaiveDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
 	}
 
-	toolbar := NewExplorerViewMainToolbar(x.appUIContext)
-	x.photoGrid = NewExplorerViewMainPhotoGrid(x.appUIContext)
+	toolbar := NewExplorerViewMainToolbar()
+	x.photoGrid = NewExplorerViewMainPhotoGrid()
 
 	x.UIContainer = container.NewBorder(nil, toolbar.UIContainer, nil, nil, x.photoGrid.UIContainer)
 
-	x.appUIContext.SubscribeToEvent(events.EventCurrentFolderChanging, x.onCurrentFolderChanging)
-	x.appUIContext.SubscribeToEvent(events.EventCurrentFolderChanged, x.onCurrentFolderChanged)
+	x.eventBus.Subscribe(events.EventCurrentFolderChanging, x.onCurrentFolderChanging)
+	x.eventBus.Subscribe(events.EventCurrentFolderChanged, x.onCurrentFolderChanged)
 
 	return x
 }
@@ -58,7 +65,7 @@ func (x *ExplorerViewMain) onCurrentFolderChanging(event *events.EventCurrentFol
 	// 	Module: reflect.TypeOf(ExplorerViewMain{}).Name(),
 	// 	Msg:    "onCurrentFolderChanging " + event.CurrentFolderPath,
 	// })
-	currentWin := x.appUIContext.GetCurrentWindow()
+	currentWin := x.router.GetCurrentWindow()
 	x.progressDialog = dialog.NewCustomWithoutButtons("Loading photos...", widget.NewProgressBarInfinite(), currentWin)
 	x.progressDialog.Resize(fyne.NewSize(300, 50))
 	x.progressDialog.Show()
@@ -66,7 +73,7 @@ func (x *ExplorerViewMain) onCurrentFolderChanging(event *events.EventCurrentFol
 
 func (x *ExplorerViewMain) onCurrentFolderChanged(event *events.EventCurrentFolderChangedParams) {
 	x.progressDialog.Hide()
-	x.appUIContext.SetSelectedPhotoIndex(0)
+	x.uiContext.SetSelectedPhotoIndex(0)
 }
 
 // ---------------------------------------------------------------------------
