@@ -89,9 +89,9 @@ func NewExplorerViewLeftBarFolderTree(appUIContext *context.AppUIContext) *Explo
 	)
 
 	x.tree.OnSelected = func(id string) {
-		folder := x.appUIContext.AppData.FolderTree.Find(id)
+		folder := x.appUIContext.GetFolderTree().Find(id)
 		if folder == nil {
-			x.appUIContext.AppData.Log.Error(ports.LogPortErrorParams{
+			x.appUIContext.LogError(ports.LogPortErrorParams{
 				Module: reflect.TypeOf(ExplorerViewLeftBarFolderTree{}).Name(),
 				Error:  fmt.Errorf("no folder found for id '%s'", id),
 			})
@@ -102,7 +102,7 @@ func NewExplorerViewLeftBarFolderTree(appUIContext *context.AppUIContext) *Explo
 
 	x.UIContainer = x.tree
 
-	x.appUIContext.EventBus.Subscribe(events.EventRootFolderChanged, x.onRootFolderChanged)
+	x.appUIContext.SubscribeToEvent(events.EventRootFolderChanged, x.onRootFolderChanged)
 
 	return x
 }
@@ -118,8 +118,8 @@ func NewExplorerViewLeftBarFolderTree(appUIContext *context.AppUIContext) *Explo
 func (x *ExplorerViewLeftBarFolderTree) onRootFolderChanged(event *events.EventRootFolderChangedParams) {
 	ids := map[string][]string{}
 	values := map[string]string{}
-	createTreeBindingIds(x.appUIContext.AppData.FolderTree, &ids, true)
-	createTreeBindingValues(x.appUIContext.AppData.FolderTree, &values)
+	createTreeBindingIds(x.appUIContext.GetFolderTree(), &ids, true)
+	createTreeBindingValues(x.appUIContext.GetFolderTree(), &values)
 	x.treeBinding.Set(ids, values)
 	x.tree.OpenBranch(ids[""][0])
 	x.tree.Refresh()
@@ -128,18 +128,18 @@ func (x *ExplorerViewLeftBarFolderTree) onRootFolderChanged(event *events.EventR
 func (x *ExplorerViewLeftBarFolderTree) onTreeItemClicked(folder *domain.FolderTree) {
 	folderPath := folder.Path
 
-	x.appUIContext.EventBus.Publish(events.EventCurrentFolderChanging, &events.EventCurrentFolderChangingParams{
+	x.appUIContext.PublishEvent(events.EventCurrentFolderChanging, &events.EventCurrentFolderChangingParams{
 		CurrentFolderPath: folderPath,
 	})
 
 	// setting the current folder in a go routine to keep the UI reactive
 	// and to let the previous event be published to subscribers
 	go func() {
-		x.appUIContext.AppData.SetCurrentFolder(&folderPath)
+		x.appUIContext.SetCurrentFolder(&folderPath)
 
-		x.appUIContext.EventBus.Publish(events.EventCurrentFolderChanged, &events.EventCurrentFolderChangedParams{
+		x.appUIContext.PublishEvent(events.EventCurrentFolderChanged, &events.EventCurrentFolderChangedParams{
 			CurrentFolderPath: folderPath,
-			PhotoList:         x.appUIContext.AppData.PhotoList,
+			PhotoList:         x.appUIContext.GetPhotoList(),
 		})
 	}()
 }

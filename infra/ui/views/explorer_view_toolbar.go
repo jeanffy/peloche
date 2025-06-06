@@ -28,7 +28,7 @@ func NewExplorerViewToolbar(appUIContext *context.AppUIContext) *ExplorerViewToo
 	}
 
 	button1 := widget.NewButton("Some toolbar button", func() {
-		appUIContext.WinManager.MessageDialog("Some toolbar button clicked")
+		appUIContext.ShowMessageBox("Some toolbar button clicked")
 	})
 	instance.UIContainer = container.NewHBox(button1)
 

@@ -46,7 +46,7 @@ type ExplorerViewMainPhotoGrid struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMainPhotoGrid(fyneWin fyne.Window, appUIContext *context.AppUIContext) *ExplorerViewMainPhotoGrid {
+func NewExplorerViewMainPhotoGrid(appUIContext *context.AppUIContext) *ExplorerViewMainPhotoGrid {
 	x := &ExplorerViewMainPhotoGrid{
 		appUIContext:    appUIContext,
 		photoContainers: []*ExplorerViewMainPhotoContainer{},
@@ -61,9 +61,8 @@ func NewExplorerViewMainPhotoGrid(fyneWin fyne.Window, appUIContext *context.App
 
 	x.UIContainer = x.scrollContainer
 
-	fyneWin.Canvas().SetOnTypedKey(x.onKeyPress)
-	x.appUIContext.EventBus.Subscribe(events.EventCurrentFolderChanged, x.onCurrentFolderChanged)
-	x.appUIContext.EventBus.Subscribe(events.EventThumbnailSizeChanged, x.onThumbnailSizeChanged)
+	x.appUIContext.SubscribeToEvent(events.EventCurrentFolderChanged, x.onCurrentFolderChanged)
+	x.appUIContext.SubscribeToEvent(events.EventThumbnailSizeChanged, x.onThumbnailSizeChanged)
 
 	return x
 }
@@ -72,13 +71,17 @@ func NewExplorerViewMainPhotoGrid(fyneWin fyne.Window, appUIContext *context.App
 // public
 // ---------------------------------------------------------------------------
 
+func (x *ExplorerViewMainPhotoGrid) Activate(fyneWin fyne.Window) {
+	fyneWin.Canvas().SetOnTypedKey(x.onKeyPress)
+}
+
 // ---------------------------------------------------------------------------
 // events
 // ---------------------------------------------------------------------------
 
 func (x *ExplorerViewMainPhotoGrid) onCurrentFolderChanged(event *events.EventCurrentFolderChangedParams) {
-	x.photoContainers = make([]*ExplorerViewMainPhotoContainer, len(x.appUIContext.AppData.PhotoList.Photos))
-	for i, photo := range x.appUIContext.AppData.PhotoList.Photos {
+	x.photoContainers = make([]*ExplorerViewMainPhotoContainer, len(x.appUIContext.GetPhotoList().Photos))
+	for i, photo := range x.appUIContext.GetPhotoList().Photos {
 		x.photoContainers[i] = NewExplorerViewMainPhotoContainer(x.appUIContext, photo, i)
 	}
 
@@ -179,5 +182,5 @@ func (x *ExplorerViewMainPhotoGrid) buildGridWithPhotos() {
 
 func (x *ExplorerViewMainPhotoGrid) editPhoto(photo *ExplorerViewMainPhotoContainer) {
 	fmt.Println("editing photo", photo.index)
-	x.appUIContext.WinManager.CreateEditorWindow(x.appUIContext)
+	x.appUIContext.NavigateTo(context.RouteEditor)
 }

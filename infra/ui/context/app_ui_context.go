@@ -8,10 +8,15 @@ import (
 	"fyne.io/fyne/v2"
 )
 
+// ---------------------------------------------------------------------------
+// definition
+// ---------------------------------------------------------------------------
+
 type AppUIContext struct {
-	WinManager         AppUIContextWinManager
-	EventBus           events.EventBus
-	AppData            *domain.AppData
+	dialogs            ContextDialogs
+	router             ContextRouter
+	eventBus           events.EventBus
+	appData            *domain.AppData
 	ThemeVariant       fyne.ThemeVariant
 	GridSize           uint
 	GridSizeMin        uint
@@ -19,11 +24,16 @@ type AppUIContext struct {
 	SelectedPhotoIndex int
 }
 
-func NewAppUIContext(fyneApp fyne.App, winManager AppUIContextWinManager, appData *domain.AppData, eventBus events.EventBus) *AppUIContext {
+// ---------------------------------------------------------------------------
+// constructor
+// ---------------------------------------------------------------------------
+
+func NewAppUIContext(fyneApp fyne.App, dialogs ContextDialogs, router ContextRouter, appData *domain.AppData, eventBus events.EventBus) *AppUIContext {
 	return &AppUIContext{
-		WinManager:         winManager,
-		EventBus:           eventBus,
-		AppData:            appData,
+		dialogs:            dialogs,
+		router:             router,
+		eventBus:           eventBus,
+		appData:            appData,
 		ThemeVariant:       fyneApp.Settings().ThemeVariant(),
 		GridSize:           200,
 		GridSizeMin:        80,
@@ -32,24 +42,76 @@ func NewAppUIContext(fyneApp fyne.App, winManager AppUIContextWinManager, appDat
 	}
 }
 
+// ---------------------------------------------------------------------------
+// public
+// ---------------------------------------------------------------------------
+
+func (x *AppUIContext) ShowMessageBox(message string) {
+	x.dialogs.MessageDialog(message)
+}
+
+func (x *AppUIContext) ShowErrorDialog(err error) {
+	x.dialogs.ErrorDialog(err)
+}
+
 func (x *AppUIContext) LogInfo(params ports.LogPortParams) {
-	x.AppData.Log.Info(params)
+	x.appData.Log.Info(params)
 }
 
 func (x *AppUIContext) LogError(params ports.LogPortErrorParams) {
-	x.AppData.Log.Error(params)
+	x.appData.Log.Error(params)
+}
+
+func (x *AppUIContext) SubscribeToEvent(id string, fn interface{}) {
+	x.eventBus.Subscribe(id, fn)
+}
+
+func (x *AppUIContext) PublishEvent(id string, args ...interface{}) {
+	x.eventBus.Publish(id, args...)
 }
 
 func (x *AppUIContext) SetGridSize(size uint) {
 	x.GridSize = size
-	x.EventBus.Publish(events.EventThumbnailSizeChanged, &events.EventThumbnailSizeChangedParams{
+	x.eventBus.Publish(events.EventThumbnailSizeChanged, &events.EventThumbnailSizeChangedParams{
 		Size: size,
 	})
 }
 
 func (x *AppUIContext) SetSelectedPhotoIndex(index int) {
 	x.SelectedPhotoIndex = index
-	x.EventBus.Publish(events.EventSelectedPhotoChanged, &events.EventSelectedPhotoChangedParams{
+	x.eventBus.Publish(events.EventSelectedPhotoChanged, &events.EventSelectedPhotoChangedParams{
 		Index: index,
 	})
 }
+
+func (x *AppUIContext) NavigateTo(route Route) {
+	x.router.NavigateTo(route)
+}
+
+func (x *AppUIContext) GetCurrentWindow() fyne.Window {
+	return x.router.GetCurrentWindow()
+}
+
+func (x *AppUIContext) GetFolderTree() *domain.FolderTree {
+	return x.appData.FolderTree
+}
+
+func (x *AppUIContext) SetRootFolder(rootFolderPath *string) {
+	x.appData.SetRootFolder(rootFolderPath)
+}
+
+func (x *AppUIContext) SetCurrentFolder(folderPath *string) {
+	x.appData.SetCurrentFolder(folderPath)
+}
+
+func (x *AppUIContext) GetPhotoList() *domain.PhotoList {
+	return x.appData.PhotoList
+}
+
+// ---------------------------------------------------------------------------
+// events
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// private
+// ---------------------------------------------------------------------------

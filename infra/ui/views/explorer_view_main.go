@@ -16,28 +16,27 @@ import (
 
 type ExplorerViewMain struct {
 	UIContainer    fyne.CanvasObject
-	fyneWin        fyne.Window
 	appUIContext   *context.AppUIContext
 	progressDialog dialog.Dialog
+	photoGrid      *ExplorerViewMainPhotoGrid
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewExplorerViewMain(fyneWin fyne.Window, appUIContext *context.AppUIContext) *ExplorerViewMain {
+func NewExplorerViewMain(appUIContext *context.AppUIContext) *ExplorerViewMain {
 	x := &ExplorerViewMain{
 		appUIContext: appUIContext,
-		fyneWin:      fyneWin,
 	}
 
 	toolbar := NewExplorerViewMainToolbar(x.appUIContext)
-	photoGrid := NewExplorerViewMainPhotoGrid(fyneWin, x.appUIContext)
+	x.photoGrid = NewExplorerViewMainPhotoGrid(x.appUIContext)
 
-	x.UIContainer = container.NewBorder(nil, toolbar.UIContainer, nil, nil, photoGrid.UIContainer)
+	x.UIContainer = container.NewBorder(nil, toolbar.UIContainer, nil, nil, x.photoGrid.UIContainer)
 
-	x.appUIContext.EventBus.Subscribe(events.EventCurrentFolderChanging, x.onCurrentFolderChanging)
-	x.appUIContext.EventBus.Subscribe(events.EventCurrentFolderChanged, x.onCurrentFolderChanged)
+	x.appUIContext.SubscribeToEvent(events.EventCurrentFolderChanging, x.onCurrentFolderChanging)
+	x.appUIContext.SubscribeToEvent(events.EventCurrentFolderChanged, x.onCurrentFolderChanged)
 
 	return x
 }
@@ -45,6 +44,10 @@ func NewExplorerViewMain(fyneWin fyne.Window, appUIContext *context.AppUIContext
 // ---------------------------------------------------------------------------
 // public
 // ---------------------------------------------------------------------------
+
+func (x *ExplorerViewMain) Activate(fyneWin fyne.Window) {
+	x.photoGrid.Activate(fyneWin)
+}
 
 // ---------------------------------------------------------------------------
 // events
@@ -55,7 +58,8 @@ func (x *ExplorerViewMain) onCurrentFolderChanging(event *events.EventCurrentFol
 	// 	Module: reflect.TypeOf(ExplorerViewMain{}).Name(),
 	// 	Msg:    "onCurrentFolderChanging " + event.CurrentFolderPath,
 	// })
-	x.progressDialog = dialog.NewCustomWithoutButtons("Loading photos...", widget.NewProgressBarInfinite(), x.fyneWin)
+	currentWin := x.appUIContext.GetCurrentWindow()
+	x.progressDialog = dialog.NewCustomWithoutButtons("Loading photos...", widget.NewProgressBarInfinite(), currentWin)
 	x.progressDialog.Resize(fyne.NewSize(300, 50))
 	x.progressDialog.Show()
 }

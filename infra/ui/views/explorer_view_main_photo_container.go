@@ -39,7 +39,7 @@ func NewExplorerViewMainPhotoContainer(appUIContext *context.AppUIContext, photo
 	x.UIContainer = container.NewStack()
 	x.refreshImageContainer()
 
-	x.appUIContext.EventBus.Subscribe(events.EventSelectedPhotoChanged, x.onSelectedPhotoIndexChanged)
+	x.appUIContext.SubscribeToEvent(events.EventSelectedPhotoChanged, x.onSelectedPhotoIndexChanged)
 
 	return x
 }

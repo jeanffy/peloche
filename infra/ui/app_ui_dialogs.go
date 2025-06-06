@@ -1,55 +1,50 @@
-package views
+package ui
 
 import (
 	"peloche/infra/ui/context"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	sdialog "github.com/sqweek/dialog"
 )
 
 // ---------------------------------------------------------------------------
 // definition
 // ---------------------------------------------------------------------------
 
-type EditorView struct {
-	UIContainer  fyne.CanvasObject
-	appUIContext *context.AppUIContext
+type AppUIDialogs struct {
+	fyneApp fyne.App
+	router  context.ContextRouter
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewEditorView(appUIContext *context.AppUIContext) *EditorView {
-	x := &EditorView{
-		appUIContext: appUIContext,
+func NewAppUIDialogs(fyneApp fyne.App, router context.ContextRouter) *AppUIDialogs {
+	return &AppUIDialogs{
+		fyneApp: fyneApp,
+		router:  router,
 	}
-
-	toolbar := NewEditorViewToolbar(x.appUIContext)
-	main := NewEditorViewMain(x.appUIContext)
-
-	x.UIContainer = container.NewBorder(toolbar.UIContainer, nil, nil, nil, main.UIContainer)
-
-	return x
 }
 
 // ---------------------------------------------------------------------------
 // public
 // ---------------------------------------------------------------------------
 
-func (x *EditorView) Activate(fyneWin fyne.Window) {
-	fyneWin.Canvas().SetOnTypedKey(x.onKeyPress)
+func (x *AppUIDialogs) MessageDialog(msg string) {
+	sdialog.Message("%s", msg).Info()
+	// FIXME: when dialog is closed, parent window does not get the focus back
+}
+
+func (x *AppUIDialogs) ErrorDialog(err error) {
+	parent := x.router.GetCurrentWindow()
+	dialog.NewError(err, parent).Show()
 }
 
 // ---------------------------------------------------------------------------
 // events
 // ---------------------------------------------------------------------------
-
-func (x *EditorView) onKeyPress(key *fyne.KeyEvent) {
-	if key.Name == fyne.KeyEscape {
-		x.appUIContext.NavigateTo(context.RouteExplorer)
-	}
-}
 
 // ---------------------------------------------------------------------------
 // private

@@ -42,7 +42,7 @@ func NewExplorerViewLeftBar(appUIContext *context.AppUIContext) *ExplorerViewLef
 
 	x.UIContainer = container.NewBorder(container.NewHBox(x.openFolderButton), nil, nil, nil, x.tree)
 
-	x.appUIContext.EventBus.Subscribe(events.EventRootFolderChanged, x.onRootFolderChanged)
+	x.appUIContext.SubscribeToEvent(events.EventRootFolderChanged, x.onRootFolderChanged)
 
 	return x
 
@@ -60,16 +60,16 @@ func (x *ExplorerViewLeftBar) onOpenFolderClicked() {
 	directory, err := xdialog.Directory().Title(lang.L("views.explorer.openFolder")).Browse()
 	if err != nil {
 		if err != xdialog.ErrCancelled {
-			x.appUIContext.WinManager.ErrorDialog(err)
+			x.appUIContext.ShowErrorDialog(err)
 		}
 		return
 	}
 
-	x.appUIContext.AppData.SetRootFolder(&directory)
+	x.appUIContext.SetRootFolder(&directory)
 
-	x.appUIContext.EventBus.Publish(events.EventRootFolderChanged, &events.EventRootFolderChangedParams{
+	x.appUIContext.PublishEvent(events.EventRootFolderChanged, &events.EventRootFolderChangedParams{
 		RootFolderPath: directory,
-		FolderTree:     x.appUIContext.AppData.FolderTree,
+		FolderTree:     x.appUIContext.GetFolderTree(),
 	})
 }
 
