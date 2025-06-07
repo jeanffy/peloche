@@ -6,7 +6,7 @@ import (
 	"peloche/infra/ui/assets"
 	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
-	"peloche/utils"
+	"peloche/internal/di"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -33,8 +33,8 @@ type ExplorerViewMainPhotoContainer struct {
 
 func NewExplorerViewMainPhotoContainer(photo *domain.Photo, index int) *ExplorerViewMainPhotoContainer {
 	x := &ExplorerViewMainPhotoContainer{
-		uiContext: utils.GetNaiveDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
-		eventBus:  utils.GetNaiveDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+		uiContext: di.GetBasicDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
+		eventBus:  di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
 		photo:     photo,
 		index:     index,
 		loaded:    false,

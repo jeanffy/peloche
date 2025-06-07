@@ -2,7 +2,7 @@ package explorerview
 
 import (
 	"peloche/infra/ui/context"
-	"peloche/utils"
+	"peloche/internal/di"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -26,7 +26,7 @@ type ExplorerViewMainToolbar struct {
 
 func NewExplorerViewMainToolbar() *ExplorerViewMainToolbar {
 	x := &ExplorerViewMainToolbar{
-		uiContext: utils.GetNaiveDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
+		uiContext: di.GetBasicDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
 	}
 
 	thumbnailSlider := widget.NewSlider(float64(x.uiContext.GridSizeMin), float64(x.uiContext.GridSizeMax))

@@ -4,7 +4,7 @@ import (
 	"peloche/infra/ui/context"
 	"peloche/infra/ui/events"
 	"peloche/infra/ui/routing"
-	"peloche/utils"
+	"peloche/internal/di"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -32,9 +32,9 @@ type ExplorerViewMain struct {
 
 func NewExplorerViewMain() *ExplorerViewMain {
 	x := &ExplorerViewMain{
-		uiContext: utils.GetNaiveDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
-		eventBus:  utils.GetNaiveDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
-		router:    utils.GetNaiveDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
+		uiContext: di.GetBasicDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
+		eventBus:  di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+		router:    di.GetBasicDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
 	}
 
 	toolbar := NewExplorerViewMainToolbar()

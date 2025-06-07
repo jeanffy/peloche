@@ -2,7 +2,7 @@ package context
 
 import (
 	"peloche/infra/ui/events"
-	"peloche/utils"
+	"peloche/internal/di"
 
 	"fyne.io/fyne/v2"
 )
@@ -29,7 +29,7 @@ type UIContext struct {
 
 func NewUIContext(fyneApp fyne.App) *UIContext {
 	return &UIContext{
-		eventBus:           utils.GetNaiveDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+		eventBus:           di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
 		ThemeVariant:       fyneApp.Settings().ThemeVariant(),
 		GridSize:           200,
 		GridSizeMin:        80,

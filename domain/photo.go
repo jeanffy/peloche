@@ -4,7 +4,7 @@ import (
 	"image"
 	"os"
 	"peloche/domain/ports"
-	"peloche/utils"
+	"peloche/internal/di"
 	"reflect"
 	"runtime"
 	"strings"
@@ -26,7 +26,7 @@ type Photo struct {
 
 func NewPhoto(name string, ext string, filePath string) *Photo {
 	return &Photo{
-		log:    utils.GetNaiveDI().Resolve(ports.LOG_PORT_TOKEN).(ports.LogPort),
+		log:    di.GetBasicDI().Resolve(ports.LOG_PORT_TOKEN).(ports.LogPort),
 		Name:   name,
 		Ext:    ext,
 		Path:   filePath,

@@ -5,7 +5,7 @@ import (
 	"peloche/domain"
 	"peloche/domain/ports"
 	"peloche/infra/ui/events"
-	"peloche/utils"
+	"peloche/internal/di"
 	"reflect"
 
 	"fyne.io/fyne/v2"
@@ -59,9 +59,9 @@ type ExplorerViewLeftBarFolderTree struct {
 
 func NewExplorerViewLeftBarFolderTree() *ExplorerViewLeftBarFolderTree {
 	x := &ExplorerViewLeftBarFolderTree{
-		eventBus: utils.GetNaiveDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
-		logPort:  utils.GetNaiveDI().Resolve(ports.LOG_PORT_TOKEN).(ports.LogPort),
-		appData:  utils.GetNaiveDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
+		eventBus: di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+		logPort:  di.GetBasicDI().Resolve(ports.LOG_PORT_TOKEN).(ports.LogPort),
+		appData:  di.GetBasicDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
 		ids:      map[string][]string{},
 		values:   map[string]string{},
 	}

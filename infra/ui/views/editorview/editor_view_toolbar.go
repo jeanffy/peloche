@@ -2,7 +2,7 @@ package editorview
 
 import (
 	"peloche/infra/ui/dialogs"
-	"peloche/utils"
+	"peloche/internal/di"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -25,7 +25,7 @@ type EditorViewToolbar struct {
 
 func NewEditorViewToolbar() *EditorViewToolbar {
 	x := &EditorViewToolbar{
-		dialogs: utils.GetNaiveDI().Resolve(dialogs.DIALOGS_TOKEN).(dialogs.Dialogs),
+		dialogs: di.GetBasicDI().Resolve(dialogs.DIALOGS_TOKEN).(dialogs.Dialogs),
 	}
 
 	button1 := widget.NewButton("Some toolbar button", func() {

@@ -3,7 +3,7 @@ package editorview
 import (
 	"peloche/domain"
 	"peloche/infra/ui/routing"
-	"peloche/utils"
+	"peloche/internal/di"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -27,7 +27,7 @@ type EditorView struct {
 
 func NewEditorView() *EditorView {
 	x := &EditorView{
-		router: utils.GetNaiveDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
+		router: di.GetBasicDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
 	}
 
 	toolbar := NewEditorViewToolbar()

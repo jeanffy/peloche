@@ -6,7 +6,7 @@ import (
 	"peloche/infra/ui/dialogs"
 	"peloche/infra/ui/events"
 	"peloche/infra/ui/routing"
-	"peloche/utils"
+	"peloche/internal/di"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -39,11 +39,11 @@ type ExplorerViewLeftBar struct {
 
 func NewExplorerViewLeftBar() *ExplorerViewLeftBar {
 	x := &ExplorerViewLeftBar{
-		uiContext: utils.GetNaiveDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
-		eventBus:  utils.GetNaiveDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
-		router:    utils.GetNaiveDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
-		dialogs:   utils.GetNaiveDI().Resolve(dialogs.DIALOGS_TOKEN).(dialogs.Dialogs),
-		appData:   utils.GetNaiveDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
+		uiContext: di.GetBasicDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
+		eventBus:  di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+		router:    di.GetBasicDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
+		dialogs:   di.GetBasicDI().Resolve(dialogs.DIALOGS_TOKEN).(dialogs.Dialogs),
+		appData:   di.GetBasicDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
 	}
 
 	x.openFolderButton = widget.NewButton(lang.L("views.explorer.openFolder"), x.onOpenFolderClicked)

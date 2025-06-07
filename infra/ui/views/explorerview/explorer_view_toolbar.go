@@ -2,7 +2,7 @@ package explorerview
 
 import (
 	"peloche/infra/ui/dialogs"
-	"peloche/utils"
+	"peloche/internal/di"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -24,7 +24,7 @@ type ExplorerViewToolbar struct {
 func NewExplorerViewToolbar() *ExplorerViewToolbar {
 	instance := &ExplorerViewToolbar{}
 
-	dialogs := utils.GetNaiveDI().Resolve(dialogs.DIALOGS_TOKEN).(dialogs.Dialogs)
+	dialogs := di.GetBasicDI().Resolve(dialogs.DIALOGS_TOKEN).(dialogs.Dialogs)
 
 	button1 := widget.NewButton("Some toolbar button", func() {
 		dialogs.MessageDialog("Some toolbar button clicked")

@@ -3,7 +3,7 @@ package domain
 import (
 	"path/filepath"
 	"peloche/domain/ports"
-	"peloche/utils"
+	"peloche/internal/di"
 	"reflect"
 	"slices"
 	"strings"
@@ -16,8 +16,8 @@ type PhotoList struct {
 }
 
 func NewPhotoList(folderPath string) *PhotoList {
-	log := utils.GetNaiveDI().Resolve(ports.LOG_PORT_TOKEN).(ports.LogPort)
-	fs := utils.GetNaiveDI().Resolve(ports.FS_PORT_TOKEN).(ports.FsPort)
+	log := di.GetBasicDI().Resolve(ports.LOG_PORT_TOKEN).(ports.LogPort)
+	fs := di.GetBasicDI().Resolve(ports.FS_PORT_TOKEN).(ports.FsPort)
 
 	entries, err := fs.ReadDir(folderPath)
 	if err != nil {

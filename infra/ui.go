@@ -2,7 +2,7 @@ package infra
 
 import (
 	"embed"
-	"fmt"
+	"log"
 	"peloche/domain"
 	"peloche/domain/ports"
 	"peloche/infra/adapters"
@@ -11,7 +11,7 @@ import (
 	"peloche/infra/ui/dialogs"
 	"peloche/infra/ui/events"
 	"peloche/infra/ui/routing"
-	"peloche/utils"
+	"peloche/internal/di"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -42,29 +42,33 @@ func (x *UI) Start() {
 	win.Resize(fyne.NewSize(900, 600))
 
 	win.SetCloseIntercept(func() {
-		fmt.Println(win.Canvas().Size().Width)
-		fmt.Println(win.Canvas().Size().Height)
+		log.Println(win.Canvas().Size().Width)
+		log.Println(win.Canvas().Size().Height)
 		win.Close()
 	})
 
 	x.initDI(app, win)
 
-	router := utils.GetNaiveDI().Resolve(routing.ROUTER_TOKEN).(routing.Router)
+	router := di.GetBasicDI().Resolve(routing.ROUTER_TOKEN).(routing.Router)
 	router.NavigateToExplorerView()
 
 	win.ShowAndRun()
 }
 
 func (x *UI) initDI(app fyne.App, win fyne.Window) {
-	di := utils.GetNaiveDI()
+	di := di.GetBasicDI()
 
 	di.Provide("FyneApp", app)
-	di.Provide(ports.LOG_PORT_TOKEN, adapters.NewLogAdapter())
-	di.Provide(ports.FS_PORT_TOKEN, adapters.NewRealFsAdapter())
-	di.Provide(events.EVENT_BUS_TOKEN, events.NewSimpleEventBus())
+
+	di.Provide(ports.LOG_PORT_TOKEN, adapters.NewLogAdapter)
+	di.Provide(ports.FS_PORT_TOKEN, adapters.NewRealFsAdapter)
+
+	di.Provide(events.EVENT_BUS_TOKEN, events.NewSimpleEventBus)
+
 	router := ui.NewUIRouter(win)
 	di.Provide(routing.ROUTER_TOKEN, router)
-	di.Provide(dialogs.DIALOGS_TOKEN, ui.NewUIDialogs())
+
+	di.Provide(dialogs.DIALOGS_TOKEN, ui.NewUIDialogs)
 
 	appData := domain.NewAppData()
 	di.Provide(domain.APP_DATA_TOKEN, appData)

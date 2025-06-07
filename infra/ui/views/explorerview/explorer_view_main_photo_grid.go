@@ -7,7 +7,7 @@ import (
 	"peloche/infra/ui/layouts"
 	"peloche/infra/ui/routing"
 	"peloche/infra/ui/widgets"
-	"peloche/utils"
+	"peloche/internal/di"
 	"slices"
 
 	"fyne.io/fyne/v2"
@@ -51,10 +51,10 @@ type ExplorerViewMainPhotoGrid struct {
 
 func NewExplorerViewMainPhotoGrid() *ExplorerViewMainPhotoGrid {
 	x := &ExplorerViewMainPhotoGrid{
-		uiContext:       utils.GetNaiveDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
-		eventBus:        utils.GetNaiveDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
-		appData:         utils.GetNaiveDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
-		router:          utils.GetNaiveDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
+		uiContext:       di.GetBasicDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
+		eventBus:        di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+		appData:         di.GetBasicDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
+		router:          di.GetBasicDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
 		photoContainers: []*ExplorerViewMainPhotoContainer{},
 		currentRow:      0,
 	}
