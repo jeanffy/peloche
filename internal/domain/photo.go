@@ -37,12 +37,12 @@ func NewPhoto(name string, ext string, filePath string) *Photo {
 
 func (x *Photo) LoadThumbnailBuffer(thumbnailSize uint) {
 	if x.Buffer == nil {
-		img := x.getDecodedPhoto(x.Path, x.Ext)
+		img := x.getDecodedPhoto(x.Path, x.Ext, thumbnailSize)
 		x.Buffer = img
 	}
 }
 
-func (x *Photo) getDecodedPhoto(filePath string, ext string) image.Image {
+func (x *Photo) getDecodedPhoto(filePath string, ext string, thumbnailSize uint) image.Image {
 	reader, err := os.Open(filePath)
 	if err != nil {
 		x.log.Error(LogPortErrorParams{
@@ -81,7 +81,7 @@ func (x *Photo) getDecodedPhoto(filePath string, ext string) image.Image {
 		imgDecoded = img
 	}
 
-	resized := resize.Resize(500, 0, imgDecoded, resize.Lanczos3)
+	resized := resize.Thumbnail(thumbnailSize, thumbnailSize, imgDecoded, resize.NearestNeighbor)
 
 	imgDecoded = nil
 	runtime.GC()
