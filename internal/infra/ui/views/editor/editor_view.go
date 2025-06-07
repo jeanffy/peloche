@@ -4,6 +4,7 @@ import (
 	"peloche/internal/domain"
 	"peloche/internal/infra/ui"
 	"peloche/pkg/di"
+	"runtime"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -53,6 +54,8 @@ func (x *EditorView) Activate(photo *domain.Photo) {
 
 func (x *EditorView) onKeyPress(key *fyne.KeyEvent) {
 	if key.Name == fyne.KeyEscape {
+		x.main.Deactivate()
+		runtime.GC()
 		x.routerPort.NavigateToExplorerView()
 	}
 }

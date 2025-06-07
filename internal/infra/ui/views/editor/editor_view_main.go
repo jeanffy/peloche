@@ -4,8 +4,8 @@ import (
 	"peloche/internal/domain"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
 )
 
 // ---------------------------------------------------------------------------
@@ -14,8 +14,7 @@ import (
 
 type EditorViewMain struct {
 	UIContainer fyne.CanvasObject
-
-	label *widget.Label
+	photo       *domain.Photo
 }
 
 // ---------------------------------------------------------------------------
@@ -25,8 +24,7 @@ type EditorViewMain struct {
 func NewEditorViewMain() *EditorViewMain {
 	x := &EditorViewMain{}
 
-	x.label = widget.NewLabel("Editor view")
-	x.UIContainer = container.NewVBox(x.label)
+	x.UIContainer = container.NewStack()
 
 	return x
 }
@@ -36,7 +34,21 @@ func NewEditorViewMain() *EditorViewMain {
 // ---------------------------------------------------------------------------
 
 func (x *EditorViewMain) Activate(photo *domain.Photo) {
-	x.label.SetText(photo.Path)
+	x.photo = photo
+
+	x.photo.LoadBuffer()
+
+	image := canvas.NewImageFromImage(x.photo.Buffer)
+	image.FillMode = canvas.ImageFillContain
+
+	x.UIContainer.(*fyne.Container).RemoveAll()
+	x.UIContainer.(*fyne.Container).Add(image)
+	x.UIContainer.Refresh()
+}
+
+func (x *EditorViewMain) Deactivate() {
+	x.photo.FreeBuffer()
+	x.photo = nil
 }
 
 // ---------------------------------------------------------------------------

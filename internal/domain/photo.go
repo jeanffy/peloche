@@ -15,34 +15,48 @@ import (
 type Photo struct {
 	log LogPort
 
-	Name   string
-	Ext    string
-	Path   string
-	Width  int
-	Height int
-	Buffer image.Image
+	Name            string
+	Ext             string
+	Path            string
+	Width           int
+	Height          int
+	ThumbnailBuffer image.Image
+	Buffer          image.Image
 }
 
 func NewPhoto(name string, ext string, filePath string) *Photo {
 	return &Photo{
-		log:    di.GetBasicDI().Resolve(LOG_PORT_TOKEN).(LogPort),
-		Name:   name,
-		Ext:    ext,
-		Path:   filePath,
-		Width:  0,
-		Height: 0,
-		Buffer: nil,
+		log:             di.GetBasicDI().Resolve(LOG_PORT_TOKEN).(LogPort),
+		Name:            name,
+		Ext:             ext,
+		Path:            filePath,
+		Width:           0,
+		Height:          0,
+		ThumbnailBuffer: nil,
+		Buffer:          nil,
 	}
 }
 
 func (x *Photo) LoadThumbnailBuffer(thumbnailSize uint) {
-	if x.Buffer == nil {
-		img := x.getDecodedPhoto(x.Path, x.Ext, thumbnailSize)
-		x.Buffer = img
+	if x.ThumbnailBuffer == nil {
+		img := x.getDecodedPhoto(x.Path, x.Ext)
+		x.ThumbnailBuffer = resize.Thumbnail(thumbnailSize, thumbnailSize, img, resize.NearestNeighbor)
+		img = nil
+		runtime.GC()
 	}
 }
 
-func (x *Photo) getDecodedPhoto(filePath string, ext string, thumbnailSize uint) image.Image {
+func (x *Photo) LoadBuffer() {
+	if x.Buffer == nil {
+		x.Buffer = x.getDecodedPhoto(x.Path, x.Ext)
+	}
+}
+
+func (x *Photo) FreeBuffer() {
+	x.Buffer = nil
+}
+
+func (x *Photo) getDecodedPhoto(filePath string, ext string) image.Image {
 	reader, err := os.Open(filePath)
 	if err != nil {
 		x.log.Error(LogPortErrorParams{
@@ -81,10 +95,5 @@ func (x *Photo) getDecodedPhoto(filePath string, ext string, thumbnailSize uint)
 		imgDecoded = img
 	}
 
-	resized := resize.Thumbnail(thumbnailSize, thumbnailSize, imgDecoded, resize.NearestNeighbor)
-
-	imgDecoded = nil
-	runtime.GC()
-
-	return resized
+	return imgDecoded
 }

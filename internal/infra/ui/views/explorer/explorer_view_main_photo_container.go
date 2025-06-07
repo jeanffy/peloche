@@ -76,10 +76,10 @@ func (x *ExplorerViewMainPhotoContainer) loadBuffer() {
 
 func (x *ExplorerViewMainPhotoContainer) refreshImageContainer() {
 	if x.loaded {
-		if x.photo.Buffer == nil {
+		if x.photo.ThumbnailBuffer == nil {
 			x.image = canvas.NewImageFromResource(assets.ResourcePhotoErrorJpg)
 		} else {
-			x.image = canvas.NewImageFromImage(x.photo.Buffer)
+			x.image = canvas.NewImageFromImage(x.photo.ThumbnailBuffer)
 		}
 	} else {
 		x.image = canvas.NewImageFromResource(assets.ResourcePhotoLoadingJpg)
