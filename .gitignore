@@ -1,6 +1,7 @@
+cmd/peloche/fyne_metadata_init.go
 output
 peloche.app
-test-data
+test/testdata/*
+!test/testdata/.gitkeep
 .DS_Store
 __debug*
-fyne_metadata_init.go

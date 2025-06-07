@@ -26,13 +26,13 @@ Only file types "jpg/jpeg", "png" and "heic" are currently supported (based on t
 
 ## How to run
 
-Clone this repo and run `go mod tidy` then `go run .`.
+Clone this repo and run `go mod tidy` then `go run ./cmd/peloche`.
 
 ## Package
 
 The app can be packaged with dedicated scripts for each platform:
 
-- macOS: `sh etc/scripts/package-macos.sh`
+- macOS: `sh build/package-macos.sh`
 
 The resulting app can be found in the `output` directory.
 
@@ -45,7 +45,7 @@ The architecture is inspired by:
 
 ### Resources
 
-If any resource is added to the `etc/resources` directory, the command `go generate` needs to be run to update the `infra/ui/assets/assets.go` file.
+If any resource is added to the `assets/embed` directory, the command `go generate ./cmd/peloche` needs to be run to update the `internal/infra/ui/assets/assets.go` file.
 
 ### External libraries used
 
@@ -59,4 +59,4 @@ If any resource is added to the `etc/resources` directory, the command `go gener
 To trigger the packaging pipeline, when the main branch is stable, create and publish a tag:
 
 - push all your commits to remote
-- `sh etc/scripts/new-release.sh vX.Y.Z`
+- `sh scripts/new-release.sh vX.Y.Z`
