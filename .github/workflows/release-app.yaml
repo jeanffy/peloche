@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
       - name: Package app
-        run: sh etc/scripts/package-macos.sh
+        run: sh build/package-macos.sh
       - uses: ncipollo/release-action@v1.16.0
         env:
           GITHUB_TOKEN: ${{ github.token }}
