@@ -37,8 +37,8 @@ func NewExplorerView() *ExplorerView {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *ExplorerView) Activate(fyneWin fyne.Window) {
-	x.main.Activate(fyneWin)
+func (x *ExplorerView) Activate() {
+	x.main.Activate()
 }
 
 // ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-package widgets
+package fyneex
 
 import (
 	"fyne.io/fyne/v2"

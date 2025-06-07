@@ -6,17 +6,17 @@ import (
 	"time"
 )
 
-type LogAdapter struct {
+type ConsoleLogAdapter struct {
 }
 
-func NewLogAdapter() *LogAdapter {
-	return &LogAdapter{}
+func NewConsoleLogAdapter() *ConsoleLogAdapter {
+	return &ConsoleLogAdapter{}
 }
 
-func (x *LogAdapter) Info(params domain.LogPortParams) {
+func (x *ConsoleLogAdapter) Info(params domain.LogPortParams) {
 	log.Printf("[%s] INF %s: %s\n", time.Now().UTC().String(), params.Module, params.Msg)
 }
 
-func (x *LogAdapter) Error(params domain.LogPortErrorParams) {
+func (x *ConsoleLogAdapter) Error(params domain.LogPortErrorParams) {
 	log.Printf("[%s] ERR %s: %s - %s\n", time.Now().UTC().String(), params.Module, params.Error.Error(), params.Msg)
 }

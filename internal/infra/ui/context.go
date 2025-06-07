@@ -1,7 +1,6 @@
-package context
+package ui
 
 import (
-	"peloche/internal/infra/ui/events"
 	"peloche/pkg/di"
 
 	"fyne.io/fyne/v2"
@@ -11,10 +10,10 @@ import (
 // definition
 // ---------------------------------------------------------------------------
 
-var UI_CONTEXT_TOKEN = "UIContext"
+var CONTEXT_TOKEN = "Context"
 
-type UIContext struct {
-	eventBus events.EventBus
+type Context struct {
+	eventsPort EventsPort
 
 	ThemeVariant       fyne.ThemeVariant
 	GridSize           uint
@@ -27,9 +26,9 @@ type UIContext struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewUIContext(fyneApp fyne.App) *UIContext {
-	return &UIContext{
-		eventBus:           di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
+func NewContext(fyneApp fyne.App) *Context {
+	return &Context{
+		eventsPort:         di.GetBasicDI().Resolve(EVENTS_PORT_TOKEN).(EventsPort),
 		ThemeVariant:       fyneApp.Settings().ThemeVariant(),
 		GridSize:           200,
 		GridSizeMin:        80,
@@ -42,16 +41,16 @@ func NewUIContext(fyneApp fyne.App) *UIContext {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *UIContext) SetGridSize(size uint) {
+func (x *Context) SetGridSize(size uint) {
 	x.GridSize = size
-	x.eventBus.Publish(events.EventThumbnailSizeChanged, &events.EventThumbnailSizeChangedParams{
+	x.eventsPort.Publish(EventThumbnailSizeChanged, &EventThumbnailSizeChangedParams{
 		Size: size,
 	})
 }
 
-func (x *UIContext) SetSelectedPhotoIndex(index int) {
+func (x *Context) SetSelectedPhotoIndex(index int) {
 	x.SelectedPhotoIndex = index
-	x.eventBus.Publish(events.EventSelectedPhotoChanged, &events.EventSelectedPhotoChangedParams{
+	x.eventsPort.Publish(EventSelectedPhotoChanged, &EventSelectedPhotoChangedParams{
 		Index: index,
 	})
 }

@@ -1,7 +1,7 @@
-package ui
+package adapters
 
 import (
-	"peloche/internal/infra/ui/routing"
+	"peloche/internal/infra/ui"
 	"peloche/pkg/di"
 
 	"fyne.io/fyne/v2"
@@ -13,19 +13,19 @@ import (
 // definition
 // ---------------------------------------------------------------------------
 
-type UIDialogs struct {
+type DialogsAdapter struct {
 	fyneApp fyne.App
-	router  routing.Router
+	router  ui.RouterPort
 }
 
 // ---------------------------------------------------------------------------
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewUIDialogs() *UIDialogs {
-	return &UIDialogs{
+func NewDialogsAdapter() *DialogsAdapter {
+	return &DialogsAdapter{
 		fyneApp: di.GetBasicDI().Resolve("FyneApp").(fyne.App),
-		router:  di.GetBasicDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
+		router:  di.GetBasicDI().Resolve(ui.ROUTER_PORT_TOKEN).(ui.RouterPort),
 	}
 }
 
@@ -33,12 +33,12 @@ func NewUIDialogs() *UIDialogs {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *UIDialogs) MessageDialog(msg string) {
+func (x *DialogsAdapter) MessageDialog(msg string) {
 	sdialog.Message("%s", msg).Info()
 	// FIXME: when dialog is closed, parent window does not get the focus back
 }
 
-func (x *UIDialogs) ErrorDialog(err error) {
+func (x *DialogsAdapter) ErrorDialog(err error) {
 	parent := x.router.GetCurrentWindow()
 	dialog.NewError(err, parent).Show()
 }

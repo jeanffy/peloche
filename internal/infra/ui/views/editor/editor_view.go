@@ -2,7 +2,7 @@ package editor
 
 import (
 	"peloche/internal/domain"
-	"peloche/internal/infra/ui/routing"
+	"peloche/internal/infra/ui"
 	"peloche/pkg/di"
 
 	"fyne.io/fyne/v2"
@@ -14,7 +14,7 @@ import (
 // ---------------------------------------------------------------------------
 
 type EditorView struct {
-	router routing.Router
+	routerPort ui.RouterPort
 
 	UIContainer fyne.CanvasObject
 
@@ -27,7 +27,7 @@ type EditorView struct {
 
 func NewEditorView() *EditorView {
 	x := &EditorView{
-		router: di.GetBasicDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
+		routerPort: di.GetBasicDI().Resolve(ui.ROUTER_PORT_TOKEN).(ui.RouterPort),
 	}
 
 	toolbar := NewEditorViewToolbar()
@@ -42,9 +42,9 @@ func NewEditorView() *EditorView {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *EditorView) Activate(fyneWin fyne.Window, photo *domain.Photo) {
-	fyneWin.Canvas().SetOnTypedKey(x.onKeyPress)
-	x.main.Activate(fyneWin, photo)
+func (x *EditorView) Activate(photo *domain.Photo) {
+	x.routerPort.GetCurrentWindow().Canvas().SetOnTypedKey(x.onKeyPress)
+	x.main.Activate(photo)
 }
 
 // ---------------------------------------------------------------------------
@@ -53,7 +53,7 @@ func (x *EditorView) Activate(fyneWin fyne.Window, photo *domain.Photo) {
 
 func (x *EditorView) onKeyPress(key *fyne.KeyEvent) {
 	if key.Name == fyne.KeyEscape {
-		x.router.NavigateToExplorerView()
+		x.routerPort.NavigateToExplorerView()
 	}
 }
 

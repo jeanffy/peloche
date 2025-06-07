@@ -1,7 +1,7 @@
 package explorer
 
 import (
-	"peloche/internal/infra/ui/dialogs"
+	"peloche/internal/infra/ui"
 	"peloche/pkg/di"
 
 	"fyne.io/fyne/v2"
@@ -22,16 +22,16 @@ type ExplorerViewToolbar struct {
 // ---------------------------------------------------------------------------
 
 func NewExplorerViewToolbar() *ExplorerViewToolbar {
-	instance := &ExplorerViewToolbar{}
+	x := &ExplorerViewToolbar{}
 
-	dialogs := di.GetBasicDI().Resolve(dialogs.DIALOGS_TOKEN).(dialogs.Dialogs)
+	dialogsPort := di.GetBasicDI().Resolve(ui.DIALOGS_PORT_TOKEN).(ui.DialogsPort)
 
 	button1 := widget.NewButton("Some toolbar button", func() {
-		dialogs.MessageDialog("Some toolbar button clicked")
+		dialogsPort.MessageDialog("Some toolbar button clicked")
 	})
-	instance.UIContainer = container.NewHBox(button1)
+	x.UIContainer = container.NewHBox(button1)
 
-	return instance
+	return x
 }
 
 // ---------------------------------------------------------------------------

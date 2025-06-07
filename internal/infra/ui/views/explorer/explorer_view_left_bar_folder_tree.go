@@ -3,7 +3,7 @@ package explorer
 import (
 	"fmt"
 	"peloche/internal/domain"
-	"peloche/internal/infra/ui/events"
+	"peloche/internal/infra/ui"
 	"peloche/pkg/di"
 	"reflect"
 
@@ -40,9 +40,9 @@ values:
 // ---------------------------------------------------------------------------
 
 type ExplorerViewLeftBarFolderTree struct {
-	logPort  domain.LogPort
-	eventBus events.EventBus
-	appData  *domain.AppData
+	logPort    domain.LogPort
+	eventsPort ui.EventsPort
+	appData    *domain.AppData
 
 	UIContainer fyne.CanvasObject
 
@@ -58,11 +58,11 @@ type ExplorerViewLeftBarFolderTree struct {
 
 func NewExplorerViewLeftBarFolderTree() *ExplorerViewLeftBarFolderTree {
 	x := &ExplorerViewLeftBarFolderTree{
-		eventBus: di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
-		logPort:  di.GetBasicDI().Resolve(domain.LOG_PORT_TOKEN).(domain.LogPort),
-		appData:  di.GetBasicDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
-		ids:      map[string][]string{},
-		values:   map[string]string{},
+		eventsPort: di.GetBasicDI().Resolve(ui.EVENTS_PORT_TOKEN).(ui.EventsPort),
+		logPort:    di.GetBasicDI().Resolve(domain.LOG_PORT_TOKEN).(domain.LogPort),
+		appData:    di.GetBasicDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
+		ids:        map[string][]string{},
+		values:     map[string]string{},
 	}
 
 	x.treeBinding = binding.BindStringTree(&x.ids, &x.values)
@@ -104,7 +104,7 @@ func NewExplorerViewLeftBarFolderTree() *ExplorerViewLeftBarFolderTree {
 
 	x.UIContainer = x.tree
 
-	x.eventBus.Subscribe(events.EventRootFolderChanged, x.onRootFolderChanged)
+	x.eventsPort.Subscribe(ui.EventRootFolderChanged, x.onRootFolderChanged)
 
 	return x
 }
@@ -117,7 +117,7 @@ func NewExplorerViewLeftBarFolderTree() *ExplorerViewLeftBarFolderTree {
 // events
 // ---------------------------------------------------------------------------
 
-func (x *ExplorerViewLeftBarFolderTree) onRootFolderChanged(event *events.EventRootFolderChangedParams) {
+func (x *ExplorerViewLeftBarFolderTree) onRootFolderChanged(event *ui.EventRootFolderChangedParams) {
 	ids := map[string][]string{}
 	values := map[string]string{}
 	createTreeBindingIds(x.appData.FolderTree, &ids, true)
@@ -130,7 +130,7 @@ func (x *ExplorerViewLeftBarFolderTree) onRootFolderChanged(event *events.EventR
 func (x *ExplorerViewLeftBarFolderTree) onTreeItemClicked(folder *domain.FolderTree) {
 	folderPath := folder.Path
 
-	x.eventBus.Publish(events.EventCurrentFolderChanging, &events.EventCurrentFolderChangingParams{
+	x.eventsPort.Publish(ui.EventCurrentFolderChanging, &ui.EventCurrentFolderChangingParams{
 		CurrentFolderPath: folderPath,
 	})
 
@@ -139,7 +139,7 @@ func (x *ExplorerViewLeftBarFolderTree) onTreeItemClicked(folder *domain.FolderT
 	go func() {
 		x.appData.SetCurrentFolder(&folderPath)
 
-		x.eventBus.Publish(events.EventCurrentFolderChanged, &events.EventCurrentFolderChangedParams{
+		x.eventsPort.Publish(ui.EventCurrentFolderChanged, &ui.EventCurrentFolderChangedParams{
 			CurrentFolderPath: folderPath,
 			PhotoList:         x.appData.PhotoList,
 		})

@@ -35,7 +35,7 @@ func NewEditorViewMain() *EditorViewMain {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *EditorViewMain) Activate(fyneWin fyne.Window, photo *domain.Photo) {
+func (x *EditorViewMain) Activate(photo *domain.Photo) {
 	x.label.SetText(photo.Path)
 }
 

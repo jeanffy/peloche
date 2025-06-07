@@ -1,9 +1,7 @@
 package explorer
 
 import (
-	"peloche/internal/infra/ui/context"
-	"peloche/internal/infra/ui/events"
-	"peloche/internal/infra/ui/routing"
+	"peloche/internal/infra/ui"
 	"peloche/pkg/di"
 
 	"fyne.io/fyne/v2"
@@ -17,9 +15,9 @@ import (
 // ---------------------------------------------------------------------------
 
 type ExplorerViewMain struct {
-	uiContext *context.UIContext
-	eventBus  events.EventBus
-	router    routing.Router
+	context    *ui.Context
+	eventsPort ui.EventsPort
+	routerPort ui.RouterPort
 
 	UIContainer    fyne.CanvasObject
 	progressDialog dialog.Dialog
@@ -32,9 +30,9 @@ type ExplorerViewMain struct {
 
 func NewExplorerViewMain() *ExplorerViewMain {
 	x := &ExplorerViewMain{
-		uiContext: di.GetBasicDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
-		eventBus:  di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
-		router:    di.GetBasicDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
+		context:    di.GetBasicDI().Resolve(ui.CONTEXT_TOKEN).(*ui.Context),
+		eventsPort: di.GetBasicDI().Resolve(ui.EVENTS_PORT_TOKEN).(ui.EventsPort),
+		routerPort: di.GetBasicDI().Resolve(ui.ROUTER_PORT_TOKEN).(ui.RouterPort),
 	}
 
 	toolbar := NewExplorerViewMainToolbar()
@@ -42,8 +40,8 @@ func NewExplorerViewMain() *ExplorerViewMain {
 
 	x.UIContainer = container.NewBorder(nil, toolbar.UIContainer, nil, nil, x.photoGrid.UIContainer)
 
-	x.eventBus.Subscribe(events.EventCurrentFolderChanging, x.onCurrentFolderChanging)
-	x.eventBus.Subscribe(events.EventCurrentFolderChanged, x.onCurrentFolderChanged)
+	x.eventsPort.Subscribe(ui.EventCurrentFolderChanging, x.onCurrentFolderChanging)
+	x.eventsPort.Subscribe(ui.EventCurrentFolderChanged, x.onCurrentFolderChanged)
 
 	return x
 }
@@ -52,28 +50,28 @@ func NewExplorerViewMain() *ExplorerViewMain {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *ExplorerViewMain) Activate(fyneWin fyne.Window) {
-	x.photoGrid.Activate(fyneWin)
+func (x *ExplorerViewMain) Activate() {
+	x.photoGrid.Activate()
 }
 
 // ---------------------------------------------------------------------------
 // events
 // ---------------------------------------------------------------------------
 
-func (x *ExplorerViewMain) onCurrentFolderChanging(event *events.EventCurrentFolderChangingParams) {
+func (x *ExplorerViewMain) onCurrentFolderChanging(event *ui.EventCurrentFolderChangingParams) {
 	// x.appUIContext.LogInfo(domain.LogPortParams{
 	// 	Module: reflect.TypeOf(ExplorerViewMain{}).Name(),
 	// 	Msg:    "onCurrentFolderChanging " + event.CurrentFolderPath,
 	// })
-	currentWin := x.router.GetCurrentWindow()
+	currentWin := x.routerPort.GetCurrentWindow()
 	x.progressDialog = dialog.NewCustomWithoutButtons("Loading photos...", widget.NewProgressBarInfinite(), currentWin)
 	x.progressDialog.Resize(fyne.NewSize(300, 50))
 	x.progressDialog.Show()
 }
 
-func (x *ExplorerViewMain) onCurrentFolderChanged(event *events.EventCurrentFolderChangedParams) {
+func (x *ExplorerViewMain) onCurrentFolderChanged(event *ui.EventCurrentFolderChangedParams) {
 	x.progressDialog.Hide()
-	x.uiContext.SetSelectedPhotoIndex(0)
+	x.context.SetSelectedPhotoIndex(0)
 }
 
 // ---------------------------------------------------------------------------

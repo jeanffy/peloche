@@ -1,8 +1,8 @@
-package events
+package ui
 
-var EVENT_BUS_TOKEN = "EventBus"
+var EVENTS_PORT_TOKEN = "EventsPort"
 
-type EventBus interface {
+type EventsPort interface {
 	Subscribe(id string, fn interface{})
 	Publish(id string, args ...interface{})
 }

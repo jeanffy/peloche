@@ -1,4 +1,4 @@
-package events
+package ui
 
 import "peloche/internal/domain"
 

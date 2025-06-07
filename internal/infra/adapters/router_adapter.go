@@ -1,4 +1,4 @@
-package ui
+package adapters
 
 import (
 	"peloche/internal/domain"
@@ -12,7 +12,7 @@ import (
 // definition
 // ---------------------------------------------------------------------------
 
-type UIRouter struct {
+type RouterAdapter struct {
 	fyneWin      fyne.Window
 	explorerView *explorer.ExplorerView
 }
@@ -21,8 +21,8 @@ type UIRouter struct {
 // constructor
 // ---------------------------------------------------------------------------
 
-func NewUIRouter(fyneWin fyne.Window) *UIRouter {
-	return &UIRouter{
+func NewRouterAdapter(fyneWin fyne.Window) *RouterAdapter {
+	return &RouterAdapter{
 		fyneWin: fyneWin,
 	}
 }
@@ -31,22 +31,22 @@ func NewUIRouter(fyneWin fyne.Window) *UIRouter {
 // public
 // ---------------------------------------------------------------------------
 
-func (x *UIRouter) GetCurrentWindow() fyne.Window {
+func (x *RouterAdapter) GetCurrentWindow() fyne.Window {
 	return x.fyneWin
 }
 
-func (x *UIRouter) NavigateToExplorerView() {
+func (x *RouterAdapter) NavigateToExplorerView() {
 	if x.explorerView == nil {
 		x.explorerView = explorer.NewExplorerView()
 	}
 	x.fyneWin.SetContent(x.explorerView.UIContainer)
-	x.explorerView.Activate(x.fyneWin)
+	x.explorerView.Activate()
 }
 
-func (x *UIRouter) NavigateToEditorView(photo *domain.Photo) {
+func (x *RouterAdapter) NavigateToEditorView(photo *domain.Photo) {
 	view := editor.NewEditorView()
 	x.fyneWin.SetContent(view.UIContainer)
-	view.Activate(x.fyneWin, photo)
+	view.Activate(photo)
 }
 
 // ---------------------------------------------------------------------------

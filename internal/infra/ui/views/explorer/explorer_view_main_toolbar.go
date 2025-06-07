@@ -1,7 +1,7 @@
 package explorer
 
 import (
-	"peloche/internal/infra/ui/context"
+	"peloche/internal/infra/ui"
 	"peloche/pkg/di"
 
 	"fyne.io/fyne/v2"
@@ -15,7 +15,7 @@ import (
 // ---------------------------------------------------------------------------
 
 type ExplorerViewMainToolbar struct {
-	uiContext *context.UIContext
+	context *ui.Context
 
 	UIContainer fyne.CanvasObject
 }
@@ -26,14 +26,14 @@ type ExplorerViewMainToolbar struct {
 
 func NewExplorerViewMainToolbar() *ExplorerViewMainToolbar {
 	x := &ExplorerViewMainToolbar{
-		uiContext: di.GetBasicDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
+		context: di.GetBasicDI().Resolve(ui.CONTEXT_TOKEN).(*ui.Context),
 	}
 
-	thumbnailSlider := widget.NewSlider(float64(x.uiContext.GridSizeMin), float64(x.uiContext.GridSizeMax))
-	thumbnailSlider.SetValue(float64(x.uiContext.GridSize))
+	thumbnailSlider := widget.NewSlider(float64(x.context.GridSizeMin), float64(x.context.GridSizeMax))
+	thumbnailSlider.SetValue(float64(x.context.GridSize))
 
 	thumbnailSlider.OnChanged = func(size float64) {
-		x.uiContext.SetGridSize(uint(size))
+		x.context.SetGridSize(uint(size))
 	}
 
 	thumbnailSize := fyne.NewSize(150, thumbnailSlider.MinSize().Height)

@@ -1,4 +1,4 @@
-package events
+package adapters
 
 import (
 	"reflect"
@@ -6,17 +6,17 @@ import (
 	"fyne.io/fyne/v2"
 )
 
-type SimpleEventBus struct {
+type SimpleEventsAdapter struct {
 	events map[string][]reflect.Value
 }
 
-func NewSimpleEventBus() *SimpleEventBus {
-	return &SimpleEventBus{
+func NewSimpleEventsAdapter() *SimpleEventsAdapter {
+	return &SimpleEventsAdapter{
 		events: make(map[string][]reflect.Value),
 	}
 }
 
-func (x *SimpleEventBus) Subscribe(id string, callbackFunc interface{}) {
+func (x *SimpleEventsAdapter) Subscribe(id string, callbackFunc interface{}) {
 	subscribers := x.events[id]
 	if x.events[id] == nil {
 		subscribers = make([]reflect.Value, 0)
@@ -25,7 +25,7 @@ func (x *SimpleEventBus) Subscribe(id string, callbackFunc interface{}) {
 	x.events[id] = subscribers
 }
 
-func (x *SimpleEventBus) Publish(id string, arguments ...interface{}) {
+func (x *SimpleEventsAdapter) Publish(id string, arguments ...interface{}) {
 	subscribers := x.events[id]
 	if subscribers == nil {
 		return

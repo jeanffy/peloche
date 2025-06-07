@@ -2,10 +2,7 @@ package explorer
 
 import (
 	"peloche/internal/domain"
-	"peloche/internal/infra/ui/context"
-	"peloche/internal/infra/ui/dialogs"
-	"peloche/internal/infra/ui/events"
-	"peloche/internal/infra/ui/routing"
+	"peloche/internal/infra/ui"
 	"peloche/pkg/di"
 
 	"fyne.io/fyne/v2"
@@ -21,11 +18,11 @@ import (
 // ---------------------------------------------------------------------------
 
 type ExplorerViewLeftBar struct {
-	uiContext *context.UIContext
-	eventBus  events.EventBus
-	router    routing.Router
-	dialogs   dialogs.Dialogs
-	appData   *domain.AppData
+	uiContext   *ui.Context
+	eventsPort  ui.EventsPort
+	routerPort  ui.RouterPort
+	dialogsPort ui.DialogsPort
+	appData     *domain.AppData
 
 	UIContainer fyne.CanvasObject
 
@@ -39,11 +36,11 @@ type ExplorerViewLeftBar struct {
 
 func NewExplorerViewLeftBar() *ExplorerViewLeftBar {
 	x := &ExplorerViewLeftBar{
-		uiContext: di.GetBasicDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
-		eventBus:  di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
-		router:    di.GetBasicDI().Resolve(routing.ROUTER_TOKEN).(routing.Router),
-		dialogs:   di.GetBasicDI().Resolve(dialogs.DIALOGS_TOKEN).(dialogs.Dialogs),
-		appData:   di.GetBasicDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
+		uiContext:   di.GetBasicDI().Resolve(ui.CONTEXT_TOKEN).(*ui.Context),
+		eventsPort:  di.GetBasicDI().Resolve(ui.EVENTS_PORT_TOKEN).(ui.EventsPort),
+		routerPort:  di.GetBasicDI().Resolve(ui.ROUTER_PORT_TOKEN).(ui.RouterPort),
+		dialogsPort: di.GetBasicDI().Resolve(ui.DIALOGS_PORT_TOKEN).(ui.DialogsPort),
+		appData:     di.GetBasicDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
 	}
 
 	x.openFolderButton = widget.NewButton(lang.L("views.explorer.openFolder"), x.onOpenFolderClicked)
@@ -54,7 +51,7 @@ func NewExplorerViewLeftBar() *ExplorerViewLeftBar {
 
 	x.UIContainer = container.NewBorder(container.NewHBox(x.openFolderButton), nil, nil, nil, x.tree)
 
-	x.eventBus.Subscribe(events.EventRootFolderChanged, x.onRootFolderChanged)
+	x.eventsPort.Subscribe(ui.EventRootFolderChanged, x.onRootFolderChanged)
 
 	return x
 
@@ -72,20 +69,20 @@ func (x *ExplorerViewLeftBar) onOpenFolderClicked() {
 	directory, err := xdialog.Directory().Title(lang.L("views.explorer.openFolder")).Browse()
 	if err != nil {
 		if err != xdialog.ErrCancelled {
-			x.dialogs.ErrorDialog(err)
+			x.dialogsPort.ErrorDialog(err)
 		}
 		return
 	}
 
 	x.appData.SetRootFolder(&directory)
 
-	x.eventBus.Publish(events.EventRootFolderChanged, &events.EventRootFolderChangedParams{
+	x.eventsPort.Publish(ui.EventRootFolderChanged, &ui.EventRootFolderChangedParams{
 		RootFolderPath: directory,
 		FolderTree:     x.appData.FolderTree,
 	})
 }
 
-func (x *ExplorerViewLeftBar) onRootFolderChanged(event *events.EventRootFolderChangedParams) {
+func (x *ExplorerViewLeftBar) onRootFolderChanged(event *ui.EventRootFolderChangedParams) {
 	fyne.Do(func() {
 		x.tree.Show()
 		x.UIContainer.Refresh()

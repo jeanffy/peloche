@@ -3,9 +3,8 @@ package explorer
 import (
 	"image/color"
 	"peloche/internal/domain"
+	"peloche/internal/infra/ui"
 	"peloche/internal/infra/ui/assets"
-	"peloche/internal/infra/ui/context"
-	"peloche/internal/infra/ui/events"
 	"peloche/pkg/di"
 
 	"fyne.io/fyne/v2"
@@ -15,8 +14,8 @@ import (
 )
 
 type ExplorerViewMainPhotoContainer struct {
-	uiContext *context.UIContext
-	eventBus  events.EventBus
+	context    *ui.Context
+	eventsPort ui.EventsPort
 
 	UIContainer fyne.CanvasObject
 
@@ -33,18 +32,18 @@ type ExplorerViewMainPhotoContainer struct {
 
 func NewExplorerViewMainPhotoContainer(photo *domain.Photo, index int) *ExplorerViewMainPhotoContainer {
 	x := &ExplorerViewMainPhotoContainer{
-		uiContext: di.GetBasicDI().Resolve(context.UI_CONTEXT_TOKEN).(*context.UIContext),
-		eventBus:  di.GetBasicDI().Resolve(events.EVENT_BUS_TOKEN).(events.EventBus),
-		photo:     photo,
-		index:     index,
-		loaded:    false,
-		selected:  false,
+		context:    di.GetBasicDI().Resolve(ui.CONTEXT_TOKEN).(*ui.Context),
+		eventsPort: di.GetBasicDI().Resolve(ui.EVENTS_PORT_TOKEN).(ui.EventsPort),
+		photo:      photo,
+		index:      index,
+		loaded:     false,
+		selected:   false,
 	}
 
 	x.UIContainer = container.NewStack()
 	x.refreshImageContainer()
 
-	x.eventBus.Subscribe(events.EventSelectedPhotoChanged, x.onSelectedPhotoIndexChanged)
+	x.eventsPort.Subscribe(ui.EventSelectedPhotoChanged, x.onSelectedPhotoIndexChanged)
 
 	return x
 }
@@ -53,17 +52,11 @@ func NewExplorerViewMainPhotoContainer(photo *domain.Photo, index int) *Explorer
 // public
 // ---------------------------------------------------------------------------
 
-func (x *ExplorerViewMainPhotoContainer) loadBuffer() {
-	x.photo.LoadThumbnailBuffer(x.uiContext.GridSizeMax)
-	x.loaded = true
-	x.refreshImageContainer()
-}
-
 // ---------------------------------------------------------------------------
 // events
 // ---------------------------------------------------------------------------
 
-func (x *ExplorerViewMainPhotoContainer) onSelectedPhotoIndexChanged(event *events.EventSelectedPhotoChangedParams) {
+func (x *ExplorerViewMainPhotoContainer) onSelectedPhotoIndexChanged(event *ui.EventSelectedPhotoChangedParams) {
 	x.selected = false
 	if event.Index == x.index {
 		x.selected = true
@@ -74,6 +67,12 @@ func (x *ExplorerViewMainPhotoContainer) onSelectedPhotoIndexChanged(event *even
 // ---------------------------------------------------------------------------
 // private
 // ---------------------------------------------------------------------------
+
+func (x *ExplorerViewMainPhotoContainer) loadBuffer() {
+	x.photo.LoadThumbnailBuffer(x.context.GridSizeMax)
+	x.loaded = true
+	x.refreshImageContainer()
+}
 
 func (x *ExplorerViewMainPhotoContainer) refreshImageContainer() {
 	if x.loaded {
@@ -89,7 +88,7 @@ func (x *ExplorerViewMainPhotoContainer) refreshImageContainer() {
 	x.image.FillMode = canvas.ImageFillContain
 
 	var fillColor color.Color
-	if x.uiContext.ThemeVariant == theme.VariantDark {
+	if x.context.ThemeVariant == theme.VariantDark {
 		fillColor = color.Black
 	} else {
 		fillColor = color.Gray16{0x888f}
