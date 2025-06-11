@@ -19,9 +19,10 @@ type ExplorerViewMain struct {
 	eventsPort ui.EventsPort
 	routerPort ui.RouterPort
 
-	UIContainer    fyne.CanvasObject
-	progressDialog dialog.Dialog
-	photoGrid      *ExplorerViewMainPhotoGrid
+	UIContainer        fyne.CanvasObject
+	progressDialog     dialog.Dialog
+	photoGrid          *ExplorerViewMainPhotoGrid
+	photoGridContainer *fyne.Container
 }
 
 // ---------------------------------------------------------------------------
@@ -36,9 +37,10 @@ func NewExplorerViewMain() *ExplorerViewMain {
 	}
 
 	toolbar := NewExplorerViewMainToolbar()
-	x.photoGrid = NewExplorerViewMainPhotoGrid()
 
-	x.UIContainer = container.NewBorder(nil, toolbar.UIContainer, nil, nil, x.photoGrid.UIContainer)
+	x.photoGrid = NewExplorerViewMainPhotoGrid()
+	x.photoGridContainer = container.NewStack()
+	x.UIContainer = container.NewBorder(nil, toolbar.UIContainer, nil, nil, x.photoGridContainer)
 
 	x.eventsPort.Subscribe(ui.EventCurrentFolderChanging, x.onCurrentFolderChanging)
 	x.eventsPort.Subscribe(ui.EventCurrentFolderChanged, x.onCurrentFolderChanged)
@@ -72,6 +74,9 @@ func (x *ExplorerViewMain) onCurrentFolderChanging(event *ui.EventCurrentFolderC
 func (x *ExplorerViewMain) onCurrentFolderChanged(event *ui.EventCurrentFolderChangedParams) {
 	x.progressDialog.Hide()
 	x.context.SetSelectedPhotoIndex(0)
+	x.photoGrid = NewExplorerViewMainPhotoGrid()
+	x.photoGridContainer.RemoveAll()
+	x.photoGridContainer.Add(x.photoGrid.UIContainer)
 }
 
 // ---------------------------------------------------------------------------

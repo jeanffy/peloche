@@ -1,27 +1,18 @@
 package explorer
 
 import (
+	"fmt"
 	"peloche/internal/domain"
 	"peloche/internal/infra/ui"
-	"peloche/internal/infra/ui/fyneex"
 	"peloche/pkg/di"
-	"slices"
+	"reflect"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/driver/desktop"
+	"fyne.io/fyne/v2/widget"
 )
-
-/*
-  +--------------------------+
-  | gridScrollContainer      |
-  | +----------------------+ |
-  | | gridLayout           | |
-  | | +------------------+ | |
-  | | | gridContainer    | | |
-  | | +------------------+ | |
-  | +----------------------+ |
-  +--------------------------+
-*/
 
 // ---------------------------------------------------------------------------
 // definition
@@ -33,13 +24,14 @@ type ExplorerViewMainPhotoGrid struct {
 	appData    *domain.AppData
 	routerPort ui.RouterPort
 
-	UIContainer fyne.CanvasObject
+	UIContainer *fyne.Container
 
-	photoContainers []*ExplorerViewMainPhotoContainer
-	scrollContainer *container.Scroll
-	layout          *fyneex.GridWrapLayout
-	grid            *fyne.Container
-	currentRow      int
+	gridSize      float32
+	data          []any
+	dataBinding   binding.ExternalUntypedList
+	grid          *widget.GridWrap
+	photoThumbs   map[string]*ExplorerViewMainPhotoThumb
+	selectedIndex int
 }
 
 // ---------------------------------------------------------------------------
@@ -48,24 +40,49 @@ type ExplorerViewMainPhotoGrid struct {
 
 func NewExplorerViewMainPhotoGrid() *ExplorerViewMainPhotoGrid {
 	x := &ExplorerViewMainPhotoGrid{
-		context:         di.GetBasicDI().Resolve(ui.CONTEXT_TOKEN).(*ui.Context),
-		eventsPort:      di.GetBasicDI().Resolve(ui.EVENTS_PORT_TOKEN).(ui.EventsPort),
-		appData:         di.GetBasicDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
-		routerPort:      di.GetBasicDI().Resolve(ui.ROUTER_PORT_TOKEN).(ui.RouterPort),
-		photoContainers: []*ExplorerViewMainPhotoContainer{},
-		currentRow:      0,
+		context:       di.GetBasicDI().Resolve(ui.CONTEXT_TOKEN).(*ui.Context),
+		eventsPort:    di.GetBasicDI().Resolve(ui.EVENTS_PORT_TOKEN).(ui.EventsPort),
+		appData:       di.GetBasicDI().Resolve(domain.APP_DATA_TOKEN).(*domain.AppData),
+		routerPort:    di.GetBasicDI().Resolve(ui.ROUTER_PORT_TOKEN).(ui.RouterPort),
+		selectedIndex: -1,
 	}
 
-	// we should be using a GridWrap widget here but unfortunately, the fyne GridWrap widget
-	// "swallows" key press events with its TypedKey event
-	// so as a workaround, we use a GridWrap layout
-	x.scrollContainer = container.NewScroll(container.NewGridWrap(fyne.NewSize(0, 0)))
-	x.createLayout()
+	if x.appData.PhotoList == nil {
+		return x
+	}
 
-	x.UIContainer = x.scrollContainer
+	x.gridSize = float32(x.context.GridSize)
 
-	x.eventsPort.Subscribe(ui.EventCurrentFolderChanged, x.onCurrentFolderChanged)
+	domainPhotos := x.appData.PhotoList.Photos
+
+	x.photoThumbs = map[string]*ExplorerViewMainPhotoThumb{}
+	for _, photo := range domainPhotos {
+		x.photoThumbs[photo.Name] = NewExplorerViewMainPhotoThumb(photo, x.gridSize)
+	}
+
+	// taken from https://stackoverflow.com/a/73029665
+	var unpackArray = func(s any) []any {
+		v := reflect.ValueOf(s)
+		r := make([]any, v.Len())
+		for i := 0; i < v.Len(); i++ {
+			r[i] = v.Index(i).Interface()
+		}
+		return r
+	}
+
+	x.data = unpackArray(domainPhotos)
+	x.dataBinding = binding.BindUntypedList(&x.data)
+	x.grid = x.createGrid()
+
+	x.UIContainer = container.NewStack(x.grid)
+
 	x.eventsPort.Subscribe(ui.EventThumbnailSizeChanged, x.onThumbnailSizeChanged)
+
+	go func() {
+		for _, photoThumb := range x.photoThumbs {
+			photoThumb.LoadImage()
+		}
+	}()
 
 	return x
 }
@@ -75,114 +92,69 @@ func NewExplorerViewMainPhotoGrid() *ExplorerViewMainPhotoGrid {
 // ---------------------------------------------------------------------------
 
 func (x *ExplorerViewMainPhotoGrid) Activate() {
-	x.routerPort.GetCurrentWindow().Canvas().SetOnTypedKey(x.onKeyPress)
+	ctrlE := &desktop.CustomShortcut{
+		Modifier: fyne.KeyModifierShortcutDefault,
+		KeyName:  fyne.KeyE,
+	}
+	x.routerPort.GetCurrentWindow().Canvas().AddShortcut(ctrlE, func(shortcut fyne.Shortcut) {
+		fmt.Println("edit")
+	})
 }
 
 // ---------------------------------------------------------------------------
 // events
 // ---------------------------------------------------------------------------
 
-func (x *ExplorerViewMainPhotoGrid) onCurrentFolderChanged(event *ui.EventCurrentFolderChangedParams) {
-	x.photoContainers = make([]*ExplorerViewMainPhotoContainer, len(x.appData.PhotoList.Photos))
-	for i, photo := range x.appData.PhotoList.Photos {
-		x.photoContainers[i] = NewExplorerViewMainPhotoContainer(photo, i)
-	}
-
-	x.buildGridWithPhotos()
-
-	go func() {
-		for _, photo := range x.photoContainers {
-			photo.loadBuffer()
-			fyne.Do(func() {
-				if photo.index < len(x.grid.Objects) {
-					x.grid.Objects[photo.index] = fyneex.NewClickableThing(photo, photo.UIContainer, x.onPhotoSelected)
-				}
-			})
-		}
-	}()
-}
-
-func (x *ExplorerViewMainPhotoGrid) onPhotoSelected(photo *ExplorerViewMainPhotoContainer) {
-	currentIndex := x.context.SelectedPhotoIndex
-	if photo.index != currentIndex {
-		x.context.SetSelectedPhotoIndex(photo.index)
-	}
-}
-
 func (x *ExplorerViewMainPhotoGrid) onThumbnailSizeChanged(event *ui.EventThumbnailSizeChangedParams) {
-	x.createLayout()
-	x.buildGridWithPhotos()
+	x.gridSize = float32(event.Size)
+	oldSelectedIndex := x.selectedIndex
+	x.grid = x.createGrid()
+	if oldSelectedIndex != -1 {
+		x.grid.Select(oldSelectedIndex)
+		x.grid.ScrollTo(oldSelectedIndex)
+	}
+	x.UIContainer.RemoveAll()
+	x.UIContainer.Add(x.grid)
 }
 
-func (x *ExplorerViewMainPhotoGrid) onKeyPress(key *fyne.KeyEvent) {
-	if slices.Contains([]fyne.KeyName{fyne.KeyUp, fyne.KeyDown, fyne.KeyLeft, fyne.KeyRight}, key.Name) {
-		x.onArrowKeyPressed(key.Name)
-	} else if key.Name == fyne.KeySpace {
-		x.onSpaceBarPressed()
-	}
-}
-
-func (x *ExplorerViewMainPhotoGrid) onArrowKeyPressed(keyName fyne.KeyName) {
-	indexMax := len(x.photoContainers) - 1
-	currentIndex := x.context.SelectedPhotoIndex
-	var nextIndex = currentIndex
-
-	if keyName == fyne.KeyLeft {
-		nextIndex = nextIndex - 1
-	} else if keyName == fyne.KeyRight {
-		nextIndex = nextIndex + 1
-	} else if keyName == fyne.KeyUp {
-		nextIndex -= x.layout.ColCount
-		if nextIndex < 0 {
-			nextIndex = currentIndex
-		}
-	} else if keyName == fyne.KeyDown {
-		nextIndex += x.layout.ColCount
-		if nextIndex > indexMax {
-			nextIndex = currentIndex
-		}
-	}
-
-	if nextIndex < 0 {
-		nextIndex = 0
-	} else if nextIndex > indexMax {
-		nextIndex = indexMax
-	}
-
-	if nextIndex != currentIndex {
-		x.context.SetSelectedPhotoIndex(nextIndex)
-		// // TODO: scroll to the selected photo
-		// x.currentRow = int(x.layout.ColCount / nextIndex)
-		// fmt.Println(x.currentRow)
-		// x.scrollContainer.ScrollToOffset(fyne.NewPos(0, float32(x.currentRow*int(x.appUIContext.GridSize))))
-	}
-}
-
-func (x *ExplorerViewMainPhotoGrid) onSpaceBarPressed() {
-	if x.context.SelectedPhotoIndex != -1 {
-		x.editPhoto(x.photoContainers[x.context.SelectedPhotoIndex])
-	}
-}
+// func (x *ExplorerViewMainPhotoGrid) onSpaceBarPressed() {
+// 	if x.context.SelectedPhotoIndex != -1 {
+// 		x.editPhoto(x.photoContainers[x.context.SelectedPhotoIndex])
+// 	}
+// }
 
 // ---------------------------------------------------------------------------
 // private
 // ---------------------------------------------------------------------------
 
-func (x *ExplorerViewMainPhotoGrid) createLayout() {
-	size := float32(x.context.GridSize)
-	x.layout = fyneex.NewMyGridWrapLayout(fyne.NewSize(size, size)).(*fyneex.GridWrapLayout)
-	x.grid = container.New(x.layout)
-	x.scrollContainer.Content = x.grid
-}
-
-func (x *ExplorerViewMainPhotoGrid) buildGridWithPhotos() {
-	x.grid.RemoveAll()
-	for _, photo := range x.photoContainers {
-		x.grid.Add(fyneex.NewClickableThing(photo, photo.UIContainer, x.onPhotoSelected))
+func (x *ExplorerViewMainPhotoGrid) createGrid() *widget.GridWrap {
+	grid := widget.NewGridWrapWithData(
+		x.dataBinding,
+		func() fyne.CanvasObject {
+			return container.NewGridWrap(fyne.NewSize(x.gridSize, x.gridSize))
+		},
+		func(data binding.DataItem, o fyne.CanvasObject) {
+			d, err := data.(binding.Untyped).Get()
+			if err != nil {
+				return
+			}
+			photo := d.(*domain.Photo)
+			photoThumbnail := x.photoThumbs[photo.Name]
+			photoThumbnail.SetSize(x.gridSize)
+			wrapper := o.(*fyne.Container)
+			wrapper.RemoveAll()
+			wrapper.Add(photoThumbnail)
+		},
+	)
+	grid.OnSelected = func(id widget.GridWrapItemID) {
+		x.selectedIndex = id
 	}
-	x.scrollContainer.Refresh()
+	grid.OnUnselected = func(id widget.GridWrapItemID) {
+		x.selectedIndex = -1
+	}
+	return grid
 }
 
-func (x *ExplorerViewMainPhotoGrid) editPhoto(photoContainer *ExplorerViewMainPhotoContainer) {
+func (x *ExplorerViewMainPhotoGrid) editPhoto(photoContainer *ExplorerViewMainPhotoThumb) {
 	x.routerPort.NavigateToEditorView(photoContainer.photo)
 }
