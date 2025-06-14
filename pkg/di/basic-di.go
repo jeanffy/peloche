@@ -5,11 +5,20 @@ import (
 	"reflect"
 )
 
+// singleton pattern
+var diContainer *basicDI
+
+// ---------------------------------------------------------------------------
+// #region definition
+
 type basicDI struct {
 	diObjects map[string]*DIObject
 }
 
-var diContainer *basicDI
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region constructor
 
 func GetBasicDI() *basicDI {
 	if diContainer != nil {
@@ -20,6 +29,11 @@ func GetBasicDI() *basicDI {
 	}
 	return diContainer
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region public
 
 func (x *basicDI) Provide(token string, object interface{}) *DIObject {
 	diOject := &DIObject{
@@ -56,3 +70,10 @@ func (x *basicDI) Resolve(token string) interface{} {
 
 	return diObject.value
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

@@ -26,9 +26,10 @@ type ExplorerViewMainPhotoThumb struct {
 	background  fyne.CanvasObject
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// constructor
-// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewExplorerViewMainPhotoThumb(photo *domain.Photo, size float32) *ExplorerViewMainPhotoThumb {
 	x := &ExplorerViewMainPhotoThumb{
@@ -48,9 +49,10 @@ func NewExplorerViewMainPhotoThumb(photo *domain.Photo, size float32) *ExplorerV
 	return x
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------------
+// #region public
 
 func (x *ExplorerViewMainPhotoThumb) CreateRenderer() fyne.WidgetRenderer {
 	return widget.NewSimpleRenderer(x.uiContainer)
@@ -74,16 +76,20 @@ func (x *ExplorerViewMainPhotoThumb) SetSize(size float32) {
 	x.refreshUIContainer()
 }
 
-// ---------------------------------------------------------------------------
-// events
-// ---------------------------------------------------------------------------
+// #endregion
 
 // ---------------------------------------------------------------------------
-// private
+// #region events
+
+// #endregion
+
 // ---------------------------------------------------------------------------
+// #region private
 
 func (x *ExplorerViewMainPhotoThumb) refreshUIContainer() {
 	x.uiContainer.RemoveAll()
 	x.uiContainer.Add(container.NewGridWrap(fyne.NewSize(x.size, x.size), x.background))
 	x.uiContainer.Add(container.NewGridWrap(fyne.NewSize(x.size-20, x.size-20), x.image))
 }
+
+// #endregion

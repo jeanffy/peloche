@@ -11,8 +11,7 @@ import (
 )
 
 // ---------------------------------------------------------------------------
-// definition
-// ---------------------------------------------------------------------------
+// #region definition
 
 type ExplorerViewMain struct {
 	context    *ui.Context
@@ -25,9 +24,10 @@ type ExplorerViewMain struct {
 	photoGridContainer *fyne.Container
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// constructor
-// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewExplorerViewMain() *ExplorerViewMain {
 	x := &ExplorerViewMain{
@@ -48,17 +48,19 @@ func NewExplorerViewMain() *ExplorerViewMain {
 	return x
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------------
+// #region public
 
 func (x *ExplorerViewMain) Activate() {
 	x.photoGrid.Activate()
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// events
-// ---------------------------------------------------------------------------
+// #region events
 
 func (x *ExplorerViewMain) onCurrentFolderChanging(event *ui.EventCurrentFolderChangingParams) {
 	// x.appUIContext.LogInfo(domain.LogPortParams{
@@ -79,6 +81,9 @@ func (x *ExplorerViewMain) onCurrentFolderChanged(event *ui.EventCurrentFolderCh
 	x.photoGridContainer.Add(x.photoGrid.UIContainer)
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// private
-// ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

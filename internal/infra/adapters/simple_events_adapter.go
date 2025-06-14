@@ -1,20 +1,36 @@
 package adapters
 
 import (
+	"peloche/internal/infra/ui"
 	"reflect"
 
 	"fyne.io/fyne/v2"
 )
 
+// ---------------------------------------------------------------------------
+// #region definition
+
+var _ ui.EventsPort = (*SimpleEventsAdapter)(nil)
+
 type SimpleEventsAdapter struct {
 	events map[string][]reflect.Value
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewSimpleEventsAdapter() *SimpleEventsAdapter {
 	return &SimpleEventsAdapter{
 		events: make(map[string][]reflect.Value),
 	}
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region public
 
 func (x *SimpleEventsAdapter) Subscribe(id string, callbackFunc interface{}) {
 	subscribers := x.events[id]
@@ -48,3 +64,15 @@ func (x *SimpleEventsAdapter) Publish(id string, arguments ...interface{}) {
 		}
 	})
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region events
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

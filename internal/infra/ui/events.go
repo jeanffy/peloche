@@ -2,7 +2,8 @@ package ui
 
 import "peloche/internal/domain"
 
-// root folder
+// ---------------------------------------------------------------------------
+// #region root folder
 
 const EventRootFolderSelected = "event.rootFolderSelected"
 
@@ -23,7 +24,10 @@ type EventRootFolderChangedParams struct {
 	FolderTree     *domain.FolderTree
 }
 
-// current folder
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region current folder
 
 const EventCurrentFolderSelected = "event.currentFolderSelected"
 
@@ -44,7 +48,10 @@ type EventCurrentFolderChangedParams struct {
 	PhotoList         *domain.PhotoList
 }
 
-// user interaction
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region user interaction
 
 const EventThumbnailSizeChanged = "event.thumbnailSizeChanged"
 
@@ -57,3 +64,5 @@ const EventSelectedPhotoChanged = "event.selectedPhotoChanged"
 type EventSelectedPhotoChangedParams struct {
 	Index int
 }
+
+// #endregion

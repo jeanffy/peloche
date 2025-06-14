@@ -8,11 +8,19 @@ import (
 	"strings"
 )
 
-var handledExtensions = []string{".heic", ".jpg", ".jpeg"}
+var HANDLED_EXTENSIONS = []string{".heic", ".jpg", ".jpeg"}
+
+// ---------------------------------------------------------------------------
+// #region definition
 
 type PhotoList struct {
 	Photos []*Photo
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewPhotoList(folderPath string) *PhotoList {
 	log := di.GetBasicDI().Resolve(LOG_PORT_TOKEN).(LogPort)
@@ -32,7 +40,7 @@ func NewPhotoList(folderPath string) *PhotoList {
 
 	photos := make([]*Photo, 0, len(entries))
 	for _, e := range entries {
-		if e.IsFile && slices.Contains(handledExtensions, strings.ToLower(e.Ext)) {
+		if e.IsFile && slices.Contains(HANDLED_EXTENSIONS, strings.ToLower(e.Ext)) {
 			filePath := filepath.Join(folderPath, e.Name)
 			photos = append(photos, NewPhoto(e.Name, e.Ext, filePath))
 		}
@@ -42,3 +50,15 @@ func NewPhotoList(folderPath string) *PhotoList {
 		Photos: photos,
 	}
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region public
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

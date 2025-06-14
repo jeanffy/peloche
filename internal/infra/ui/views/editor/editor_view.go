@@ -11,8 +11,7 @@ import (
 )
 
 // ---------------------------------------------------------------------------
-// definition
-// ---------------------------------------------------------------------------
+// #region definition
 
 type EditorView struct {
 	routerPort ui.RouterPort
@@ -22,9 +21,10 @@ type EditorView struct {
 	main *EditorViewMain
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// constructor
-// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewEditorView() *EditorView {
 	x := &EditorView{
@@ -39,18 +39,20 @@ func NewEditorView() *EditorView {
 	return x
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------------
+// #region public
 
 func (x *EditorView) Activate(photo *domain.Photo) {
 	x.routerPort.GetCurrentWindow().Canvas().SetOnTypedKey(x.onKeyPress)
 	x.main.Activate(photo)
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// events
-// ---------------------------------------------------------------------------
+// #region events
 
 func (x *EditorView) onKeyPress(key *fyne.KeyEvent) {
 	if key.Name == fyne.KeyEscape {
@@ -60,6 +62,9 @@ func (x *EditorView) onKeyPress(key *fyne.KeyEvent) {
 	}
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// private
-// ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

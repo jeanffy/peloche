@@ -2,6 +2,7 @@ package adapters
 
 import (
 	"peloche/internal/domain"
+	"peloche/internal/infra/ui"
 	"peloche/internal/infra/ui/views/editor"
 	"peloche/internal/infra/ui/views/explorer"
 
@@ -9,17 +10,19 @@ import (
 )
 
 // ---------------------------------------------------------------------------
-// definition
-// ---------------------------------------------------------------------------
+// #region definition
+
+var _ ui.RouterPort = (*RouterAdapter)(nil)
 
 type RouterAdapter struct {
 	fyneWin      fyne.Window
 	explorerView *explorer.ExplorerView
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// constructor
-// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewRouterAdapter(fyneWin fyne.Window) *RouterAdapter {
 	return &RouterAdapter{
@@ -27,9 +30,10 @@ func NewRouterAdapter(fyneWin fyne.Window) *RouterAdapter {
 	}
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------------
+// #region public
 
 func (x *RouterAdapter) GetCurrentWindow() fyne.Window {
 	return x.fyneWin
@@ -49,10 +53,14 @@ func (x *RouterAdapter) NavigateToEditorView(photo *domain.Photo) {
 	view.Activate(photo)
 }
 
-// ---------------------------------------------------------------------------
-// events
-// ---------------------------------------------------------------------------
+// #endregion
 
 // ---------------------------------------------------------------------------
-// private
+// #region events
+
+// #endregion
+
 // ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

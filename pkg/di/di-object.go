@@ -4,6 +4,9 @@ import (
 	"reflect"
 )
 
+// ---------------------------------------------------------------------------
+// #region definition
+
 type DIInstanceType int8
 
 const (
@@ -17,6 +20,23 @@ type DIObject struct {
 	value        interface{}
 }
 
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region constructor
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region public
+
 func (x *DIObject) AsSingleton() {
 	x.instanceType = Singleton
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

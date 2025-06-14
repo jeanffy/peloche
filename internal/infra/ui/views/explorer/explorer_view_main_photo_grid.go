@@ -15,8 +15,7 @@ import (
 )
 
 // ---------------------------------------------------------------------------
-// definition
-// ---------------------------------------------------------------------------
+// #region definition
 
 type ExplorerViewMainPhotoGrid struct {
 	context    *ui.Context
@@ -34,9 +33,10 @@ type ExplorerViewMainPhotoGrid struct {
 	selectedIndex int
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// constructor
-// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewExplorerViewMainPhotoGrid() *ExplorerViewMainPhotoGrid {
 	x := &ExplorerViewMainPhotoGrid{
@@ -87,9 +87,10 @@ func NewExplorerViewMainPhotoGrid() *ExplorerViewMainPhotoGrid {
 	return x
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------------
+// #region public
 
 func (x *ExplorerViewMainPhotoGrid) Activate() {
 	ctrlE := &desktop.CustomShortcut{
@@ -101,9 +102,10 @@ func (x *ExplorerViewMainPhotoGrid) Activate() {
 	})
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// events
-// ---------------------------------------------------------------------------
+// #region events
 
 func (x *ExplorerViewMainPhotoGrid) onThumbnailSizeChanged(event *ui.EventThumbnailSizeChangedParams) {
 	x.gridSize = float32(event.Size)
@@ -123,9 +125,10 @@ func (x *ExplorerViewMainPhotoGrid) onThumbnailSizeChanged(event *ui.EventThumbn
 // 	}
 // }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// private
-// ---------------------------------------------------------------------------
+// #region private
 
 func (x *ExplorerViewMainPhotoGrid) createGrid() *widget.GridWrap {
 	grid := widget.NewGridWrapWithData(
@@ -158,3 +161,5 @@ func (x *ExplorerViewMainPhotoGrid) createGrid() *widget.GridWrap {
 func (x *ExplorerViewMainPhotoGrid) editPhoto(photoContainer *ExplorerViewMainPhotoThumb) {
 	x.routerPort.NavigateToEditorView(photoContainer.photo)
 }
+
+// #endregion

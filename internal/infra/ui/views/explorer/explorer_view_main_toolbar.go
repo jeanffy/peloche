@@ -11,8 +11,7 @@ import (
 )
 
 // ---------------------------------------------------------------------------
-// definition
-// ---------------------------------------------------------------------------
+// #region definition
 
 type ExplorerViewMainToolbar struct {
 	context *ui.Context
@@ -20,9 +19,10 @@ type ExplorerViewMainToolbar struct {
 	UIContainer fyne.CanvasObject
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// constructor
-// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewExplorerViewMainToolbar() *ExplorerViewMainToolbar {
 	x := &ExplorerViewMainToolbar{
@@ -42,14 +42,19 @@ func NewExplorerViewMainToolbar() *ExplorerViewMainToolbar {
 	return x
 }
 
-// ---------------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------------
+// #endregion
 
 // ---------------------------------------------------------------------------
-// events
-// ---------------------------------------------------------------------------
+// #region public
+
+// #endregion
 
 // ---------------------------------------------------------------------------
-// private
+// #region events
+
+// #endregion
+
 // ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

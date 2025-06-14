@@ -14,8 +14,7 @@ import (
 )
 
 // ---------------------------------------------------------------------------
-// definition
-// ---------------------------------------------------------------------------
+// #region definition
 
 type ExplorerViewLeftBar struct {
 	uiContext   *ui.Context
@@ -30,9 +29,10 @@ type ExplorerViewLeftBar struct {
 	tree             *widget.Tree
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// constructor
-// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewExplorerViewLeftBar() *ExplorerViewLeftBar {
 	x := &ExplorerViewLeftBar{
@@ -57,13 +57,15 @@ func NewExplorerViewLeftBar() *ExplorerViewLeftBar {
 
 }
 
-// ---------------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------------
+// #endregion
 
 // ---------------------------------------------------------------------------
-// events
+// #region public
+
+// #endregion
+
 // ---------------------------------------------------------------------------
+// #region events
 
 func (x *ExplorerViewLeftBar) onOpenFolderClicked() {
 	directory, err := xdialog.Directory().Title(lang.L("views.explorer.openFolder")).Browse()
@@ -89,6 +91,9 @@ func (x *ExplorerViewLeftBar) onRootFolderChanged(event *ui.EventRootFolderChang
 	})
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// private
-// ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

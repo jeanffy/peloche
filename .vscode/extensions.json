@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "aaron-bond.better-comments",
+    "bam.vscode-file-templates",
+    "editorconfig.editorconfig",
+    "golang.go",
+    "wayou.vscode-todo-highlight"
+  ]
+}

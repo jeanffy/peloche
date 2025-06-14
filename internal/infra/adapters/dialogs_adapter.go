@@ -10,17 +10,19 @@ import (
 )
 
 // ---------------------------------------------------------------------------
-// definition
-// ---------------------------------------------------------------------------
+// #region definition
+
+var _ ui.DialogsPort = (*DialogsAdapter)(nil)
 
 type DialogsAdapter struct {
 	fyneApp fyne.App
 	router  ui.RouterPort
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// constructor
-// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewDialogsAdapter() *DialogsAdapter {
 	return &DialogsAdapter{
@@ -29,9 +31,10 @@ func NewDialogsAdapter() *DialogsAdapter {
 	}
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------------
+// #region public
 
 func (x *DialogsAdapter) MessageDialog(msg string) {
 	sdialog.Message("%s", msg).Info()
@@ -43,10 +46,14 @@ func (x *DialogsAdapter) ErrorDialog(err error) {
 	dialog.NewError(err, parent).Show()
 }
 
-// ---------------------------------------------------------------------------
-// events
-// ---------------------------------------------------------------------------
+// #endregion
 
 // ---------------------------------------------------------------------------
-// private
+// #region events
+
+// #endregion
+
 // ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

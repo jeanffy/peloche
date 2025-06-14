@@ -36,8 +36,7 @@ values:
 */
 
 // ---------------------------------------------------------------------------
-// definition
-// ---------------------------------------------------------------------------
+// #region definition
 
 type ExplorerViewLeftBarFolderTree struct {
 	logPort    domain.LogPort
@@ -52,9 +51,10 @@ type ExplorerViewLeftBarFolderTree struct {
 	tree        *widget.Tree
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// constructor
-// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewExplorerViewLeftBarFolderTree() *ExplorerViewLeftBarFolderTree {
 	x := &ExplorerViewLeftBarFolderTree{
@@ -109,13 +109,15 @@ func NewExplorerViewLeftBarFolderTree() *ExplorerViewLeftBarFolderTree {
 	return x
 }
 
-// ---------------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------------
+// #endregion
 
 // ---------------------------------------------------------------------------
-// events
+// #region public
+
+// #endregion
+
 // ---------------------------------------------------------------------------
+// #region events
 
 func (x *ExplorerViewLeftBarFolderTree) onRootFolderChanged(event *ui.EventRootFolderChangedParams) {
 	ids := map[string][]string{}
@@ -146,9 +148,10 @@ func (x *ExplorerViewLeftBarFolderTree) onTreeItemClicked(folder *domain.FolderT
 	}()
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// private
-// ---------------------------------------------------------------------------
+// #region private
 
 func createTreeBindingIds(folderTree *domain.FolderTree, ids *map[string][]string, isRoot bool) {
 	subFolderIds := make([]string, 0, len(folderTree.SubFolders))
@@ -169,3 +172,5 @@ func createTreeBindingValues(folderTree *domain.FolderTree, values *map[string]s
 		createTreeBindingValues(subFolder, values)
 	}
 }
+
+// #endregion

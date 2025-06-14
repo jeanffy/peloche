@@ -6,11 +6,19 @@ import (
 	"reflect"
 )
 
+// ---------------------------------------------------------------------------
+// #region definition
+
 type FolderTree struct {
 	Name       string
 	Path       string
 	SubFolders []*FolderTree
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewFolderTree(folderPath string, level int) *FolderTree {
 	if level > 5 {
@@ -54,6 +62,11 @@ func NewFolderTree(folderPath string, level int) *FolderTree {
 	}
 }
 
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region public
+
 func (x *FolderTree) Find(path string) *FolderTree {
 	if x.Path == path {
 		return x
@@ -78,3 +91,10 @@ func (x *FolderTree) GetSubFolderPaths() []string {
 func (x *FolderTree) HasSubFolders() bool {
 	return len(x.SubFolders) > 0
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

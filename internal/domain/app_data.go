@@ -2,6 +2,9 @@ package domain
 
 var APP_DATA_TOKEN = "AppData"
 
+// ---------------------------------------------------------------------------
+// #region definition
+
 type AppData struct {
 	ArgumentPath      *string
 	RootFolderPath    *string
@@ -10,9 +13,19 @@ type AppData struct {
 	PhotoList         *PhotoList
 }
 
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region constructor
+
 func NewAppData() *AppData {
 	return &AppData{}
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region public
 
 func (x *AppData) SetArgumentPath(argumentPath *string) {
 	x.ArgumentPath = argumentPath
@@ -28,3 +41,10 @@ func (x *AppData) SetCurrentFolder(currentFolderPath *string) {
 	x.CurrentFolderPath = currentFolderPath
 	x.PhotoList = NewPhotoList(*x.CurrentFolderPath)
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

@@ -9,17 +9,17 @@ import (
 )
 
 // ---------------------------------------------------------------------------
-// definition
-// ---------------------------------------------------------------------------
+// #region definition
 
 type EditorViewMain struct {
 	UIContainer fyne.CanvasObject
 	photo       *domain.Photo
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// constructor
-// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewEditorViewMain() *EditorViewMain {
 	x := &EditorViewMain{}
@@ -29,9 +29,10 @@ func NewEditorViewMain() *EditorViewMain {
 	return x
 }
 
+// #endregion
+
 // ---------------------------------------------------------------------------
-// public
-// ---------------------------------------------------------------------------
+// #region public
 
 func (x *EditorViewMain) Activate(photo *domain.Photo) {
 	x.photo = photo
@@ -51,10 +52,14 @@ func (x *EditorViewMain) Deactivate() {
 	x.photo = nil
 }
 
-// ---------------------------------------------------------------------------
-// events
-// ---------------------------------------------------------------------------
+// #endregion
 
 // ---------------------------------------------------------------------------
-// private
+// #region events
+
+// #endregion
+
 // ---------------------------------------------------------------------------
+// #region private
+
+// #endregion

@@ -16,12 +16,25 @@ import (
 //go:embed translation
 var translations embed.FS
 
+// ---------------------------------------------------------------------------
+// #region definition
+
 type PelocheApp struct {
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewPelocheApp() *PelocheApp {
 	return &PelocheApp{}
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region public
 
 func (x *PelocheApp) Start() {
 	err := lang.AddTranslationsFS(translations, "translation")
@@ -50,6 +63,16 @@ func (x *PelocheApp) Start() {
 	win.ShowAndRun()
 }
 
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region events
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region private
+
 func (x *PelocheApp) initDI(app fyne.App, win fyne.Window) {
 	di := di.GetBasicDI()
 
@@ -70,3 +93,5 @@ func (x *PelocheApp) initDI(app fyne.App, win fyne.Window) {
 
 	di.Provide(ui.CONTEXT_TOKEN, ui.NewContext(app))
 }
+
+// #endregion

@@ -12,6 +12,9 @@ import (
 	"github.com/nfnt/resize"
 )
 
+// ---------------------------------------------------------------------------
+// #region definition
+
 type Photo struct {
 	log LogPort
 
@@ -23,6 +26,11 @@ type Photo struct {
 	ThumbnailBuffer image.Image
 	Buffer          image.Image
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewPhoto(name string, ext string, filePath string) *Photo {
 	return &Photo{
@@ -36,6 +44,11 @@ func NewPhoto(name string, ext string, filePath string) *Photo {
 		Buffer:          nil,
 	}
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region public
 
 func (x *Photo) LoadThumbnailBuffer(thumbnailSize uint) {
 	if x.ThumbnailBuffer == nil {
@@ -55,6 +68,11 @@ func (x *Photo) LoadBuffer() {
 func (x *Photo) FreeBuffer() {
 	x.Buffer = nil
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region private
 
 func (x *Photo) getImageBuffer() image.Image {
 	reader, err := os.Open(x.Path)
@@ -97,3 +115,5 @@ func (x *Photo) getImageBuffer() image.Image {
 
 	return imgDecoded
 }
+
+// #endregion

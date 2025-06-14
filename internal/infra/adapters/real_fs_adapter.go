@@ -8,15 +8,30 @@ import (
 	"reflect"
 )
 
+// ---------------------------------------------------------------------------
+// #region definition
+
+var _ domain.FsPort = (*RealFsAdapter)(nil)
+
 type RealFsAdapter struct {
 	log domain.LogPort
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region constructor
 
 func NewRealFsAdapter() *RealFsAdapter {
 	return &RealFsAdapter{
 		log: di.GetBasicDI().Resolve(domain.LOG_PORT_TOKEN).(domain.LogPort),
 	}
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region public
 
 func (x *RealFsAdapter) ReadDir(dirPath string) ([]domain.FsPortEntry, error) {
 	entries, err := os.ReadDir(dirPath)
@@ -41,3 +56,15 @@ func (x *RealFsAdapter) ReadDir(dirPath string) ([]domain.FsPortEntry, error) {
 	}
 	return mapped, nil
 }
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region events
+
+// #endregion
+
+// ---------------------------------------------------------------------------
+// #region private
+
+// #endregion
