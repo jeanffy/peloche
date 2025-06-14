@@ -39,7 +39,7 @@ func NewPhoto(name string, ext string, filePath string) *Photo {
 
 func (x *Photo) LoadThumbnailBuffer(thumbnailSize uint) {
 	if x.ThumbnailBuffer == nil {
-		img := x.getDecodedPhoto(x.Path, x.Ext)
+		img := x.getImageBuffer()
 		x.ThumbnailBuffer = resize.Thumbnail(thumbnailSize, thumbnailSize, img, resize.NearestNeighbor)
 		img = nil
 		runtime.GC()
@@ -48,7 +48,7 @@ func (x *Photo) LoadThumbnailBuffer(thumbnailSize uint) {
 
 func (x *Photo) LoadBuffer() {
 	if x.Buffer == nil {
-		x.Buffer = x.getDecodedPhoto(x.Path, x.Ext)
+		x.Buffer = x.getImageBuffer()
 	}
 }
 
@@ -56,13 +56,13 @@ func (x *Photo) FreeBuffer() {
 	x.Buffer = nil
 }
 
-func (x *Photo) getDecodedPhoto(filePath string, ext string) image.Image {
-	reader, err := os.Open(filePath)
+func (x *Photo) getImageBuffer() image.Image {
+	reader, err := os.Open(x.Path)
 	if err != nil {
 		x.log.Error(LogPortErrorParams{
 			Module: reflect.TypeOf(PhotoList{}).Name(),
 			Error:  err,
-			Msg:    filePath,
+			Msg:    x.Path,
 		})
 		return nil
 	}
@@ -71,13 +71,13 @@ func (x *Photo) getDecodedPhoto(filePath string, ext string) image.Image {
 
 	var imgDecoded image.Image = nil
 
-	if strings.ToLower(ext) == ".heic" {
+	if strings.ToLower(x.Ext) == ".heic" {
 		img, err := goheif.Decode(reader)
 		if err != nil {
 			x.log.Error(LogPortErrorParams{
 				Module: reflect.TypeOf(PhotoList{}).Name(),
 				Error:  err,
-				Msg:    filePath,
+				Msg:    x.Path,
 			})
 			return nil
 		}
@@ -88,7 +88,7 @@ func (x *Photo) getDecodedPhoto(filePath string, ext string) image.Image {
 			x.log.Error(LogPortErrorParams{
 				Module: reflect.TypeOf(PhotoList{}).Name(),
 				Error:  err,
-				Msg:    filePath,
+				Msg:    x.Path,
 			})
 			return nil
 		}
