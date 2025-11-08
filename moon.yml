@@ -1,0 +1,71 @@
+dependsOn:
+  - main
+  - preload
+  - renderer
+
+tasks:
+  install:
+    command: pnpm i && pnpm dedupe
+
+  build-win:
+    deps: ['^:build']
+    command: electron-vite build -c etc/build/electron.vite.config.ts && electron-builder --config etc/build/electron-builder.ts --win
+    options: { cache: false }
+
+  build-linux:
+    deps: ['^:build']
+    command: electron-vite build -c etc/build/electron.vite.config.ts && electron-builder --config etc/build/electron-builder.ts --linux
+    options: { cache: false }
+
+  build-mac:
+    deps: ['^:build']
+    command: electron-vite build -c etc/build/electron.vite.config.ts && electron-builder --config etc/build/electron-builder.ts --mac
+    options: { cache: false }
+
+  clean:
+    command: moon clean --lifetime '0 days' && rm -rf node_modules && rm -rf output
+    options: { cache: false }
+
+  lint:
+    deps:
+      - ^:lint
+      - internalRootTsLintSpell
+      - internalRootTsLintFormat
+      - internalRootTsLintSyntax
+
+  lint-fix:
+    deps:
+      - ^:lint-fix
+      - internalRootTsLintFormatFix
+      - internalRootTsLintSyntaxFix
+
+  dev:
+    deps: ['core:build', 'interop:build']
+    command: cross-env ELECTRON_DISABLE_SECURITY_WARNINGS=true electron-vite dev -c etc/build/electron.vite.config.ts -w
+    options: { cache: false }
+
+  preview:
+    deps: ['core:build', 'interop:build']
+    command: cross-env ELECTRON_DISABLE_SECURITY_WARNINGS=true electron-vite preview  -c etc/build/electron.vite.config.ts
+    options: { cache: false }
+
+  # --------------------------------------------------------------------------
+  # internal tasks
+  # --------------------------------------------------------------------------
+
+  internalRootTsLintFormat:
+    command: npx prettier --check --config etc/config/.prettierrc.json --ignore-path etc/config/.prettierignore --cache . '!apps' '!libs'
+
+  internalRootTsLintSpell:
+    command: npx cspell --dot --no-must-find-files --no-progress -c etc/config/.cspell.json -e apps -e libs .
+
+  internalRootTsLintSyntax:
+    command: eslint -c "$workspaceRoot/eslint.config.mjs" --max-warnings 0 . --ignore-pattern 'apps/' --ignore-pattern 'libs/' --ignore-pattern 'output/'
+
+  internalRootTsLintFormatFix:
+    extends: internalRootTsLintFormat
+    args: --write
+
+  internalRootTsLintSyntaxFix:
+    extends: internalRootTsLintSyntax
+    args: --fix

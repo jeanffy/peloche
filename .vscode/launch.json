@@ -1,0 +1,59 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "cwd": "${workspaceRoot}",
+      "env": {
+        "REMOTE_DEBUGGING_PORT": "9222",
+        "ELECTRON_DISABLE_SECURITY_WARNINGS": "true"
+      },
+      "name": "Main process",
+      "preLaunchTask": "build",
+      "presentation": {
+        "hidden": true
+      },
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": ["dev", "--sourcemap", "-w", "--entry", "output/main/main.cjs"],
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron-vite",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron-vite.cmd"
+      }
+    },
+    {
+      "name": "Renderer process",
+      "port": 9222,
+      "presentation": {
+        "hidden": true
+      },
+      "request": "attach",
+      "timeout": 60000,
+      "type": "chrome",
+      "webRoot": "${workspaceFolder}/apps/renderer"
+    },
+    {
+      "args": ["run", "--test-timeout=0", "--no-file-parallelism"],
+      "autoAttachChildProcesses": true,
+      "console": "internalConsole",
+      "cwd": "${workspaceRoot}/apps/main",
+      "name": "Tests main",
+      "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "smartStep": true,
+      "type": "node"
+    }
+  ],
+  "compounds": [
+    {
+      "configurations": ["Main process", "Renderer process"],
+      "name": "Application",
+      "presentation": {
+        "hidden": false,
+        "group": "",
+        "order": 1
+      },
+      "stopAll": true
+    }
+  ]
+}

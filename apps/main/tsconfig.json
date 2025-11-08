@@ -1,0 +1,9 @@
+{
+  "extends": "../../etc/config/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "outDir": "dist"
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts"],
+  "files": ["environment.d.ts"]
+}

@@ -1,0 +1,7 @@
+@use '../styles/vars';
+
+.wrapper {
+  height: 100%;
+  border: 5px solid green;
+  padding: vars.$layoutGutter;
+}

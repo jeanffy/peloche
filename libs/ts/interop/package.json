@@ -1,0 +1,26 @@
+{
+  "name": "interop",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    "./domain": {
+      "ts-source": "./src/domain/index.ts",
+      "import": "./dist/src/domain/index.js",
+      "require": "./dist/src/domain/index.js"
+    },
+    "./infra": {
+      "ts-source": "./src/infra/index.ts",
+      "import": "./dist/src/infra/index.js",
+      "require": "./dist/src/infra/index.js"
+    }
+  },
+  "types": "./dist/src/index.d.ts",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "4.17.21"
+  },
+  "packageManager": "pnpm@10.10.0"
+}

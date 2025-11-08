@@ -1,0 +1,7 @@
+{
+  "ignorePaths": ["**/.devcontainer", "**/.git", "**/.moon", "**/.vscode", "**/pnpm-lock.yaml"],
+  "ignoreWords": [],
+  "language": "en",
+  "useGitignore": true,
+  "words": ["awilix", "vite"]
+}

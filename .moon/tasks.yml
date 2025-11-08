@@ -1,0 +1,106 @@
+# https://moonrepo.dev/docs/config/tasks
+
+# for variables '$xxx' see https://moonrepo.dev/docs/concepts/token#variables
+
+# https://moonrepo.dev/docs/config/project#tasks
+tasks:
+  # --------------------------------------------------------------------------
+  # common
+  # --------------------------------------------------------------------------
+
+  clean: { deps: ['^:clean'] }
+  install: { deps: ['^:install'] }
+
+  # --------------------------------------------------------------------------
+  # specific for Typescript projects
+  # --------------------------------------------------------------------------
+
+  tsLint:
+    deps:
+      - internalTsLintCircular
+      - internalTsLintFormat
+      - internalTsLintSpell
+      - internalTsLintSyntax
+
+  tsLintFix:
+    deps:
+      - internalTsLintFormatFix
+      - internalTsLintSyntaxFix
+
+  tsTest:
+    toolchain: unstable_npm
+    env:
+      npm_package_name: $project
+      ROOT_DIR: $workspaceRoot
+    command: vitest run --coverage
+
+  tsTestWatch:
+    toolchain: unstable_npm
+    env:
+      npm_package_name: $project
+      ROOT_DIR: $workspaceRoot
+    command: vitest --coverage
+
+  # -- internal --
+
+  internalTsLintCircular:
+    options:
+      runFromWorkspaceRoot: true # mandatory so file paths are reported relative to repo root instead of each project root
+    command: npx madge -c --ts-config "$projectRoot/tsconfig.json" --extensions ts "$projectRoot/src"
+
+  internalTsLintFormat:
+    options:
+      runFromWorkspaceRoot: true # mandatory so file paths are reported relative to repo root instead of each project root
+    command: npx prettier --check --config "$workspaceRoot/etc/config/.prettierrc.json" --ignore-path "$workspaceRoot/etc/config/.prettierignore" --cache "$projectRoot"
+
+  internalTsLintSpell:
+    options:
+      runFromWorkspaceRoot: true # mandatory so file paths are reported relative to repo root instead of each project root
+    command: npx cspell --dot --no-must-find-files --no-progress -c "$workspaceRoot/etc/config/.cspell.json" "$projectRoot"
+
+  internalTsLintSyntax:
+    command: eslint --max-warnings 0 "$projectRoot"
+
+  internalTsLintFormatFix:
+    extends: internalTsLintFormat
+    args: --write
+
+  internalTsLintSyntaxFix:
+    extends: internalTsLintSyntax
+    args: --fix
+
+  # --------------------------------------------------------------------------
+  # specific for Go projects
+  # --------------------------------------------------------------------------
+
+  goLint:
+    deps:
+      - internalGoLintFormat
+      - internalGoLintSyntax
+
+  goLintFix:
+    deps:
+      - internalGoLintFormatFix
+      - internalGoLintSyntaxFix
+
+  # -- internal --
+
+  internalGoLintFormat:
+    options:
+      runFromWorkspaceRoot: true # mandatory so file paths are reported relative to repo root instead of each project root
+    command: gofmt -d "$projectRoot"
+
+  internalGoLintSyntax:
+    # options:
+    #   runFromWorkspaceRoot: true # mandatory so file paths are reported relative to repo root instead of each project root
+    command: ~/go/bin/staticcheck . && go vet .
+
+  internalGoLintFormatFix:
+    options:
+      runFromWorkspaceRoot: true # mandatory so file paths are reported relative to repo root instead of each project root
+    command: gofmt -w "$projectRoot"
+
+  internalGoLintSyntaxFix:
+    options:
+      runFromWorkspaceRoot: true # mandatory so file paths are reported relative to repo root instead of each project root
+    command: echo 'No syntax fix for go'

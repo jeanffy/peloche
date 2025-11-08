@@ -1,0 +1,42 @@
+{
+  "[javascript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[tsx]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[yaml]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "eslint.debug": false,
+  // "eslint.options": {
+  //   "overrideConfigFile": "etc/config/eslint.config.mjs"
+  // },
+  "eslint.useFlatConfig": true,
+  "prettier.configPath": "etc/config/.prettierrc.json",
+  "yaml.schemas": {
+    "https://moonrepo.dev/schemas/tasks.json": [".moon/tasks.yml"],
+    //"https://moonrepo.dev/schemas/toolchain.json": [".moon/toolchain.yml"],
+    "https://moonrepo.dev/schemas/workspace.json": [".moon/workspace.yml"],
+    "https://moonrepo.dev/schemas/project.json": ["**/moon.yml"]
+  }
+}

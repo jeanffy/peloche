@@ -1,0 +1,22 @@
+# https://moonrepo.dev/docs/config/toolchain
+
+unstable_javascript:
+  packageManager: pnpm
+  # bug https://github.com/pnpm/pnpm/issues/6321, pnpm dedupe is ran after install
+  dedupeOnLockfileChange: false
+
+unstable_node:
+  {}
+  #version: '22.1.0'
+
+unstable_npm:
+  {}
+  #version: '10.9.0'
+
+unstable_pnpm:
+  {}
+  #version: '10.10.0'
+
+unstable_go:
+  {}
+  #version: 1.24.3

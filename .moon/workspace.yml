@@ -1,0 +1,14 @@
+# https://moonrepo.dev/docs/config/workspace
+
+projects:
+  - '.'
+  - 'apps/*'
+  - 'libs/go/*'
+  - 'libs/ts/*'
+
+telemetry: false
+
+vcs:
+  defaultBranch: main
+  manager: git
+  provider: github

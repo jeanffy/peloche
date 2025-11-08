@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "alefragnani.bookmarks",
+    "dbaeumer.vscode-eslint",
+    "christian-kohler.path-intellisense",
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "golang.go",
+    "ms-vscode-remote.remote-containers",
+    "redhat.vscode-yaml"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "preload",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "interop": "workspace:*"
+  },
+  "packageManager": "pnpm@10.10.0"
+}

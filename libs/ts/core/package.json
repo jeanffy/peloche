@@ -1,0 +1,19 @@
+{
+  "name": "core",
+  "version": "0.0.0",
+  "description": "",
+  "type": "module",
+  "exports": {
+    ".": {
+      "ts-source": "./src/index.ts",
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js"
+    }
+  },
+  "types": "./dist/src/index.d.ts",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "packageManager": "pnpm@10.10.0"
+}

@@ -1,0 +1,17 @@
+@use '../styles/vars';
+
+.wrapper {
+  height: 100%;
+  display: flex;
+
+  .navigation {
+    border: 5px solid green;
+    padding: vars.$layoutGutter;
+  }
+
+  .content {
+    border: 5px solid red;
+    flex-grow: 1;
+    padding: vars.$layoutGutter;
+  }
+}
